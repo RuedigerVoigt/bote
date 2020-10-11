@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="bote",
-    version="0.9.0",
+    version="0.9.1",
     author="Rüdiger Voigt",
     author_email="projects@ruediger-voigt.eu",
     description="Send email messages",
@@ -18,12 +18,13 @@ setuptools.setup(
     package_data={"bote": ["py.typed"]},
     packages=setuptools.find_packages(),
     python_requires=">=3.6",
-    install_requires=["userprovided>=0.5.5"],
+    install_requires=["userprovided>=0.7.4"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Development Status :: 4 - Beta",

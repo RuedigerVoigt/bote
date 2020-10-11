@@ -42,7 +42,7 @@ class Mailer:
 
         self.server: str = mail_settings.get('server', 'localhost')
         self.is_local = False
-        if self.server in ('localhost', '127.0.0.1'):
+        if self.server in ('localhost', '127.0.0.1', '::1'):
             self.is_local = True
 
         # Encryption defaults to 'off' because the default for server

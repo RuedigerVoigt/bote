@@ -28,7 +28,7 @@ class Mailer:
 
         compatibility.Check(
             package_name='bote',
-            package_version='0.9.2',
+            package_version='1.0.0',
             release_date=date(2021, 1, 30),
             python_version_support={
                 'min_version': '3.6',

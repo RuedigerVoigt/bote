@@ -8,10 +8,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="bote",
-    version="0.9.2",
+    version="1.0.0",
     author="Rüdiger Voigt",
     author_email="projects@ruediger-voigt.eu",
-    description="Send email messages",
+    description="Send email messages and enforce encryption.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/RuedigerVoigt/bote",
@@ -27,9 +27,10 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Topic :: System :: Monitoring",
-        "Topic :: Communications :: Email"
+        "Topic :: Communications :: Email",
+        "Topic :: Security :: Cryptography"
     ],
 )

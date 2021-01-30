@@ -3,6 +3,6 @@
 
 from bote.mail import Mailer
 
-name = "bote"
-__version__ = "0.9.2"
+NAME = "bote"
+__version__ = "1.0.0"
 __author__ = "Rüdiger Voigt"

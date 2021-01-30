@@ -1,5 +1,9 @@
 # Changelog / History
 
+## version 1.0.0 stable (2021-01-30)
+
+* Change development status from `beta` to `stable`.
+* Check used Python version with the [`compatibility`](https://github.com/RuedigerVoigt/compatibility) package. (A sister-project so development is synchronized.)
 
 ## version 0.9.1 beta (2020-10-11)
 

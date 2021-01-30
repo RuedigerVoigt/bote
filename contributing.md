@@ -9,8 +9,9 @@ Guidelines:
  * If you run into an exception please provide the complete traceback if possible.
  * Please answer the following questions:
      * How can the issue be reproduced?
-     * What version of exoskeleton are you using and how did you install it?
-     * Which python version do you use?
+     * What is your Operating System?
+     * What version of bote are you using and how did you install it?
+     * Which Python version do you use?
 
 
  ## Code Contributions
@@ -20,6 +21,7 @@ Guidelines:
  bloat by implementing too many features.
 
  * Please adhere to [PEP8](https://www.python.org/dev/peps/pep-0008/).
- * The code should included documentation.
+ * The code should include some documentation.
  * Variable names should be speaking.
+ * Type hints are necessary.
 

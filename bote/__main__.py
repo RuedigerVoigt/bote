@@ -70,7 +70,7 @@ class Mailer:
         if self.server_port:
             if not userprovided.port.port_in_range(self.server_port):
                 raise ValueError('Port must be integer (0 to 65536)')
-        if self.is_local and not self.server_port:
+        if not self.is_local and not self.server_port:
             raise ValueError('You must provide a port if you connect ' +
                              'to a remote SMTP server.')
 

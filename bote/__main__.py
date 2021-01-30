@@ -77,19 +77,14 @@ class Mailer:
         self.username = mail_settings.get('username', None)
         self.passphrase = mail_settings.get('passphrase', None)
 
-        self.recipient = mail_settings.get('recipient', None)
-        if self.recipient:
-            if not userprovided.mail.is_email(self.recipient):
-                raise ValueError('recipient is not a valid email!')
-        else:
-            raise ValueError('Missing recipient in mail_settings!')
+        self.recipient = mail_settings['recipient']
+        if not userprovided.mail.is_email(self.recipient):
+            raise ValueError('recipient is not a valid email!')
 
-        self.sender = mail_settings.get('sender', None)
-        if self.sender:
-            if not userprovided.mail.is_email(self.sender):
-                raise ValueError('sender is not a valid email!')
-        else:
-            raise ValueError('Missing sender in mail_settings!')
+        self.sender = mail_settings['sender']
+        if not userprovided.mail.is_email(self.sender):
+            raise ValueError('sender is not a valid email!')
+
         # Create SSL context. According to the docs this will:
         # * load the system’s trusted CA certificates,
         # * enable certificate validation and hostname checking,
@@ -102,9 +97,9 @@ class Mailer:
                   message_subject: str,
                   message_text: str,
                   overwrite_recipient: Optional[str] = None) -> None:
-        u"""Send an email. Sender and receiver were fixed
-            with the constructor. With the overwrite_receiver
-            parameter you can change the recipient once."""
+        """Send an email.
+           Sender and receiver were fixed with the constructor.
+           With overwrite_receiver you change the recipient for this mail."""
 
         recipient = self.recipient
         if overwrite_recipient:

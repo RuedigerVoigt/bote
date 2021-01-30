@@ -4,6 +4,8 @@
 
 * Change development status from `beta` to `stable`.
 * Check used Python version with the [`compatibility`](https://github.com/RuedigerVoigt/compatibility) package. (A sister-project so development is synchronized.)
+* Replaced `unittest` with the `pytest` testing framework and increased test coverage.
+* Fixed minor bug: Would not raise an exception if no port was provided for an external server
 
 ## version 0.9.1 beta (2020-10-11)
 

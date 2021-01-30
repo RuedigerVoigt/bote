@@ -1,0 +1,7 @@
+[run]
+branch = False
+cover_pylib = False
+source = bote
+
+[html]
+title = Coverage Report for the bote Python Package

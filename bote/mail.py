@@ -3,6 +3,7 @@
 
 """ Send email """
 
+from datetime import date
 from email.message import EmailMessage
 import logging
 import smtplib
@@ -10,7 +11,9 @@ import ssl
 import textwrap
 from typing import Optional
 
-import userprovided  # sister-project
+# sister-projects:
+import compatibility
+import userprovided
 
 
 class Mailer:
@@ -22,6 +25,20 @@ class Mailer:
                  mail_settings: dict):
         """Check the mail settings for plausibility and set
            missing values to their default. """
+
+        compatibility.Check(
+            package_name='bote',
+            package_version='0.9.2',
+            release_date=date(2021, 1, 30),
+            python_version_support={
+                'min_version': '3.6',
+                'incompatible_versions': [],
+                'max_tested_version': '3.9'},
+            nag_over_update={
+                    'nag_days_after_release': 365,
+                    'nag_in_hundred': 100},
+            language_messages='en'
+        )
 
         userprovided.parameters.validate_dict_keys(
             dict_to_check=mail_settings,

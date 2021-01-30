@@ -76,6 +76,13 @@ class Mailer:
 
         self.username = mail_settings.get('username', None)
         self.passphrase = mail_settings.get('passphrase', None)
+        # Even for a remote connection username and passphrase might be
+        # not necessary - for example if the identification is host based.
+        # Therfore no exception is thrown.
+        if not self.username:
+            logging.debug('Parameter username is empty.')
+        if not self.passphrase:
+            logging.debug('Parameter passphrase is empty.')
 
         self.recipient = mail_settings['recipient']
         if not userprovided.mail.is_email(self.recipient):
@@ -100,6 +107,7 @@ class Mailer:
         """Send an email.
            Sender and receiver were fixed with the constructor.
            With overwrite_receiver you change the recipient for this mail."""
+        # pylint: disable=too-many-branches
 
         recipient = self.recipient
         if overwrite_recipient:

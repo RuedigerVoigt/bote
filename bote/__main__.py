@@ -151,6 +151,13 @@ class Mailer:
         except smtplib.SMTPAuthenticationError:
             logging.exception('SMTP authentication failed. ' +
                               'Please check username / passphrase.')
+            raise
+        except smtplib.SMTPSenderRefused:
+            logging.exception('SMTP server refused sender.')
+            raise
+        except smtplib.SMTPServerDisconnected:
+            logging.exception('SMTP server unexpectedly disconnect.')
+            raise
         except Exception:
             logging.exception('Problem sending Mail!', exc_info=True)
             raise

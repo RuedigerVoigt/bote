@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-u""" Send email """
+""" Send email """
 
 from email.message import EmailMessage
 import logging
@@ -14,45 +14,37 @@ import userprovided  # sister-project
 
 
 class Mailer:
-    u""" Class of bote to send mail """
+    " Class of bote to send mail "
+    # pylint: disable=too-few-public-methods
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(self,
                  mail_settings: dict):
-        u"""Check the mail settings for plausibility and set
-            missing values to their default. """
+        """Check the mail settings for plausibility and set
+           missing values to their default. """
 
-        try:
-            # Check whether it is a dict and if there are unknown keys:
-            known_mail_keys = ('server',
-                               'server_port',
-                               'encryption',
-                               'username',
-                               'passphrase',
-                               'recipient',
-                               'sender')
-            found_keys = mail_settings.keys()
-            for key in found_keys:
-                if key not in known_mail_keys:
-                    raise ValueError('Unknown key in mail_settings: %s', key)
-        except AttributeError:
-            raise AttributeError('mail_settings must be a dictionary!')
+        userprovided.parameters.validate_dict_keys(
+            dict_to_check=mail_settings,
+            allowed_keys={'server', 'server_port', 'encryption',
+                          'username', 'passphrase',
+                          'recipient', 'sender'},
+            necessary_keys={'recipient', 'sender'},
+            dict_name='mail_settings')
 
-        # Not all keys must be there. defaultdict lets us provide
-        # default values for those missing!
+        # Not all keys must be there.
+        # Provide default values for missing ones with defaultdict:
 
         self.server: str = mail_settings.get('server', 'localhost')
         self.is_local = False
         if self.server in ('localhost', '127.0.0.1', '::1'):
             self.is_local = True
 
-        # Encryption defaults to 'off' because the default for server
-        # is localhost.
+        # Encryption defaults to 'off' as the default for server is localhost.
         self.encryption: str = mail_settings.get('encryption', 'off')
         # There are three valid values:
         if self.encryption not in ('off', 'starttls', 'ssl'):
             raise ValueError('Invalid value for the encryption parameter!')
-        # Enforce some sort of encryption if the connection
-        # is not to localhost:
+        # Enforce encryption if the connection is not to localhost:
         if not self.is_local and self.encryption == 'off':
             raise ValueError('Connection is not to localhost, ' +
                              'but an encryption method is not set!')
@@ -62,7 +54,7 @@ class Mailer:
             if not userprovided.port.port_in_range(self.server_port):
                 raise ValueError('Port must be integer (0 to 65536)')
         if self.is_local and not self.server_port:
-            raise ValueError('You need to provide a port if you connect ' +
+            raise ValueError('You must provide a port if you connect ' +
                              'to a remote SMTP server.')
 
         self.username = mail_settings.get('username', None)
@@ -92,7 +84,7 @@ class Mailer:
     def send_mail(self,
                   message_subject: str,
                   message_text: str,
-                  overwrite_recipient: Optional[str] = None):
+                  overwrite_recipient: Optional[str] = None) -> None:
         u"""Send an email. Sender and receiver were fixed
             with the constructor. With the overwrite_receiver
             parameter you can change the recipient once."""
@@ -114,8 +106,7 @@ class Mailer:
 
         wrap = textwrap.TextWrapper(width=80)
 
-        # To preserve intentional linebreaks, the text is
-        # wrapped linewise.
+        # To preserve intentional linebreaks, the text is wrapped linewise.
         wrapped_text = ''
         for line in str.splitlines(message_text):
             wrapped_text += wrap.fill(line) + "\n"
@@ -151,4 +142,4 @@ class Mailer:
         except Exception:
             logging.exception('Problem sending Mail!', exc_info=True)
             raise
-        return
+        return None

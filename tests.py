@@ -14,20 +14,26 @@ Source: https://github.com/RuedigerVoigt/bote
 Released under the Apache License 2.0
 """
 
+import unittest.mock
+
+
 import pytest
+import pytest_mock
 import bote
 
+import smtplib
 
-def test_send_mail():
-    # False, but valid settings
+
+def test_send_mail(mocker):
+    # False, but 'valid' settings
     mail_settings = {
-        'server': 'smtp.example.com',
-        'server_port': 587,
-        'encryption': 'starttls',
-        'username': 'exampleuser',
-        'passphrase': 'example',
-        'recipient': 'foo@example.com',
-        'sender': 'bar@example.com'}
+    'server': 'smtp.example.com',
+    'server_port': 587,
+    'encryption': 'starttls',
+    'username': 'exampleuser',
+    'passphrase': 'example',
+    'recipient': 'foo@example.com',
+    'sender': 'bar@example.com'}
     mailer = bote.Mailer(mail_settings)
     # Missing subject line
     with pytest.raises(ValueError) as excinfo:
@@ -44,6 +50,35 @@ def test_send_mail():
     with pytest.raises(ValueError) as excinfo:
         mailer.send_mail('random subject', None)
     assert 'No mail content supplied.' in str(excinfo.value)
+
+    # ############### PATCH smtplib ##################
+    # as we do not want to actually send an email
+    mocker.patch('smtplib.SMTP')
+    # send_mail: standard
+    mailer.send_mail('random subject', 'random content')
+    # send_mail: overwrite recipient
+    mailer.send_mail('random subject', 'random content', 'foo@example.com')
+    # overwrite recipient with invalid value
+    with pytest.raises(ValueError) as excinfo:
+        mailer.send_mail('random subject', 'random content', 'not_valid')
+    assert 'Invalid value for overwrite_recipient' in str(excinfo.value)
+    # switch OFF encryption and switch to localhost
+    mail_settings['encryption'] = 'off'
+    mail_settings['server'] = 'localhost'
+    mailer = bote.Mailer(mail_settings)
+    mailer.send_mail('random subject', 'random content')
+    # Switch to SSL encryption and not localhost
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'ssl',
+        'username': 'exampleuser',
+        'passphrase': 'example',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
+    mailer = bote.Mailer(mail_settings)
+    # TO DO: check this (could be system dependent or a bug):
+    #mailer.send_mail('random subject', 'random content')
 
 
 def test_enforce_crypto():
@@ -64,8 +99,7 @@ def test_invalid_in_combination():
     with pytest.raises(ValueError) as excinfo:
         external_but_no_port = {
             'server': 'smtp.example.com',
-            'server_port': None,
-            'encryption': 'ssl',
+            'encryption': 'starttls',
             'username': 'exampleuser',
             'passphrase': 'example',
             'recipient': 'foo@example.com',
@@ -121,12 +155,56 @@ def test_invalid_parameters():
     assert 'Invalid value for the encryption parameter' in str(excinfo.value)
 
 
+def test_missing_username():
+    # username set to None
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': None,
+        'passphrase': 'example',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
+    mailer = bote.Mailer(mail_settings)
+    # username key missing
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'passphrase': 'example',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
+    mailer = bote.Mailer(mail_settings)
+
+
+def test_missing_passphrase():
+    # passphrase set to none
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'exampleuser',
+        'passphrase': None,
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
+    mailer = bote.Mailer(mail_settings)
+    # passphrase key missing
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'exampleuser',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
+    mailer = bote.Mailer(mail_settings)
+
+
 def test_recognize_localhost():
     localhost_as_string = {
         'server': 'localhost',
         'server_port': 587,
         'encryption': 'starttls',
-        'username': 'exampleuser',
+        'username': None,
         'passphrase': 'example',
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com'}

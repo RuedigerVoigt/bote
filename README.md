@@ -38,4 +38,8 @@ mailer.send_mail('Test bote',  # subject
                  )
 ```
 
-You should not store secrets in code that may be shared or saved to source control. To avoid accidental exposure of secrets it is best practice to use environment variables that can be accessed with `os.environ.get()`. The [`python-dotenv`](https://github.com/theskumar/python-dotenv) could be useful for this too, but do not forget to add `.env` files to `.gitignore`.
+### Keeping Your Credentials Save
+
+>You should not store secrets in code that may be shared or saved to source control.
+
+To avoid accidental exposure of secrets it is best practice to use environment variables that can be accessed with `os.environ.get()`. The [`python-dotenv`](https://github.com/theskumar/python-dotenv) could be useful for this too - do not forget to add `.env` files to `.gitignore`.

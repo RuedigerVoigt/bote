@@ -14,6 +14,7 @@ Source: https://github.com/RuedigerVoigt/bote
 Released under the Apache License 2.0
 """
 
+import smtplib
 import unittest.mock
 
 
@@ -21,19 +22,17 @@ import pytest
 import pytest_mock
 import bote
 
-import smtplib
-
 
 def test_send_mail(mocker):
     # False, but 'valid' settings
     mail_settings = {
-    'server': 'smtp.example.com',
-    'server_port': 587,
-    'encryption': 'starttls',
-    'username': 'exampleuser',
-    'passphrase': 'example',
-    'recipient': 'foo@example.com',
-    'sender': 'bar@example.com'}
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'exampleuser',
+        'passphrase': 'example',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
     mailer = bote.Mailer(mail_settings)
     # Missing subject line
     with pytest.raises(ValueError) as excinfo:
@@ -78,7 +77,7 @@ def test_send_mail(mocker):
         'sender': 'bar@example.com'}
     mailer = bote.Mailer(mail_settings)
     # TO DO: check this (could be system dependent or a bug):
-    #mailer.send_mail('random subject', 'random content')
+    # mailer.send_mail('random subject', 'random content')
 
 
 def test_enforce_crypto():

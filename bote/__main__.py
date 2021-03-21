@@ -21,6 +21,7 @@ class Mailer:
     "Class of bote to send email"
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
+    # pylint: disable=unidiomatic-typecheck
 
     def __init__(self,
                  mail_settings: Dict[str, Any]):
@@ -72,8 +73,8 @@ class Mailer:
             if not userprovided.port.port_in_range(self.server_port):
                 raise ValueError('Port must be integer (0 to 65536)')
         if not self.is_local and not self.server_port:
-            raise ValueError('You must provide a port if you connect ' +
-                             'to a remote SMTP server.')
+            raise ValueError(
+                'Provide a port if you connect to a remote SMTP server.')
 
         self.username = mail_settings.get('username', None)
         self.passphrase = mail_settings.get('passphrase', None)
@@ -86,7 +87,14 @@ class Mailer:
             logging.debug('Parameter passphrase is empty.')
 
         self.recipient = mail_settings['recipient']
-        if not userprovided.mail.is_email(self.recipient):
+        if type(self.recipient) not in [str, dict]:
+            raise ValueError(
+                'Parameter recipient must be either string or dictionary.')
+
+        if type(self.recipient) == dict:
+            if len(self.recipient) == 0:
+                raise ValueError('Dictionary recipient is empty.')
+        elif not userprovided.mail.is_email(self.recipient):
             raise ValueError('recipient is not a valid email!')
 
         self.sender = mail_settings['sender']

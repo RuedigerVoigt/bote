@@ -104,7 +104,7 @@ def test_invalid_in_combination():
             'recipient': 'foo@example.com',
             'sender': 'bar@example.com'}
         mailer = bote.Mailer(external_but_no_port)
-    assert 'You must provide a port' in str(excinfo.value)
+    assert 'Provide a port' in str(excinfo.value)
 
 
 def test_invalid_parameters():
@@ -130,6 +130,31 @@ def test_invalid_parameters():
             'sender': 'foo@example.com'}
         mailer = bote.Mailer(recipient_is_not_email)
     assert 'recipient is not a valid email!' in str(excinfo.value)
+
+    with pytest.raises(ValueError) as excinfo:
+        recipient_is_empty_dict = {
+            'server': 'smtp.example.com',
+            'server_port': 123,
+            'encryption': 'ssl',
+            'username': 'exampleuser',
+            'passphrase': 'example',
+            'recipient': dict(),
+            'sender': 'foo@example.com'}
+        mailer = bote.Mailer(recipient_is_empty_dict)
+    assert 'Dictionary recipient is empty' in str(excinfo.value)
+
+    with pytest.raises(ValueError) as excinfo:
+        recipient_neither_str_nor_dict = {
+            'server': 'smtp.example.com',
+            'server_port': 123,
+            'encryption': 'ssl',
+            'username': 'exampleuser',
+            'passphrase': 'example',
+            'recipient': 1,
+            'sender': 'foo@example.com'}
+        mailer = bote.Mailer(recipient_neither_str_nor_dict)
+    assert 'must be' in str(excinfo.value)
+
     with pytest.raises(ValueError) as excinfo:
         port_out_of_range = {
             'server': 'smtp.example.com',

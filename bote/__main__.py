@@ -9,7 +9,7 @@ import logging
 import smtplib
 import ssl
 import textwrap
-from typing import Optional
+from typing import Any, Dict, Optional
 
 # sister-projects:
 import compatibility
@@ -22,7 +22,7 @@ class Mailer:
     # pylint: disable=too-many-instance-attributes
 
     def __init__(self,
-                 mail_settings: dict):
+                 mail_settings: Dict[str, Any]):
         """Check the mail settings for plausibility and set
            missing values to their default. """
 
@@ -169,4 +169,3 @@ class Mailer:
         except Exception:
             logging.exception('Problem sending Mail!', exc_info=True)
             raise
-        return None

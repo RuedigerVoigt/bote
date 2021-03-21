@@ -3,12 +3,14 @@
 
 import setuptools
 
+from bote import _version
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="bote",
-    version="1.0.0",
+    version=f"{_version.__version__}",
     author="Rüdiger Voigt",
     author_email="projects@ruediger-voigt.eu",
     description="Send email messages and enforce encryption.",
@@ -18,7 +20,8 @@ setuptools.setup(
     package_data={"bote": ["py.typed"]},
     packages=setuptools.find_packages(),
     python_requires=">=3.6",
-    install_requires=["compatibility>=0.9.0", "userprovided>=0.8.1"],
+    install_requires=["compatibility>=0.9.0",
+                      "userprovided>=0.8.1"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",

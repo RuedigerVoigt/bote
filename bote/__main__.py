@@ -3,7 +3,6 @@
 
 """ Send email """
 
-from datetime import date
 from email.message import EmailMessage
 import logging
 import smtplib
@@ -15,9 +14,11 @@ from typing import Any, Dict, Optional
 import compatibility
 import userprovided
 
+from bote import _version as version
+
 
 class Mailer:
-    " Class of bote to send mail "
+    "Class of bote to send email"
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
 
@@ -28,8 +29,8 @@ class Mailer:
 
         compatibility.Check(
             package_name='bote',
-            package_version='1.0.0',
-            release_date=date(2021, 1, 30),
+            package_version=version.__version__,
+            release_date=version.release_date,
             python_version_support={
                 'min_version': '3.6',
                 'incompatible_versions': [],
@@ -157,8 +158,8 @@ class Mailer:
                     s.send_message(msg)
 
         except smtplib.SMTPAuthenticationError:
-            logging.exception('SMTP authentication failed. ' +
-                              'Please check username / passphrase.')
+            logging.exception(
+                'SMTP authentication failed: check username / passphrase.')
             raise
         except smtplib.SMTPSenderRefused:
             logging.exception('SMTP server refused sender.')

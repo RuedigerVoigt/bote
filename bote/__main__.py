@@ -47,7 +47,8 @@ class Mailer:
             dict_to_check=mail_settings,
             allowed_keys={'server', 'server_port', 'encryption',
                           'username', 'passphrase',
-                          'recipient', 'sender'},
+                          'recipient', 'sender',
+                          'wrap_width'},
             necessary_keys={'recipient', 'sender'},
             dict_name='mail_settings')
 
@@ -117,6 +118,10 @@ class Mailer:
         if not userprovided.mail.is_email(self.sender):
             raise ValueError('sender is not a valid email!')
 
+        self.wrap_width = mail_settings.get('wrap_width', 80)
+        if not isinstance(self.wrap_width, int):
+            raise ValueError('wrap_width is not an integer!')
+
         # Create SSL context. According to the docs this will:
         # * load the system’s trusted CA certificates,
         # * enable certificate validation and hostname checking,
@@ -162,7 +167,7 @@ class Mailer:
         if message_text == '' or message_text is None:
             raise ValueError('No mail content supplied.')
 
-        wrap = textwrap.TextWrapper(width=80)
+        wrap = textwrap.TextWrapper(width=self.wrap_width)
 
         # To preserve intentional linebreaks, the text is wrapped linewise.
         wrapped_text = ''

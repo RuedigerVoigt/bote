@@ -29,7 +29,8 @@ mail_settings = {
     'username': os.environ.get('MAIL_USER'),
     'passphrase': os.environ.get('MAIL_PASSPHRASE'),
     'recipient': 'foo@example.com',
-    'sender': 'bar@example.com'}
+    'sender': 'bar@example.com',
+    'wrap_width': 80}
 
 mailer = bote.Mailer(mail_settings)
 
@@ -37,6 +38,18 @@ mailer.send_mail('Test bote',  # subject
                  'It worked!'  # mail body
                  )
 ```
+
+All parameters except `recipient` and `sender` are optional as `bote` has defaults for all others:
+
+Parameter | Default Value
+--- | ---
+`server`| `localhost`
+`server_port`| `None`
+`encryption`| `off`
+`username`| `None`
+`passphrase`| `None`
+`wrap_width`| `80`
+
 
 ### Keeping Your Credentials Save
 

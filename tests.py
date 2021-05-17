@@ -191,6 +191,18 @@ def test_invalid_parameters():
         mailer = bote.Mailer(unknown_encryption)
     assert 'Invalid value for the encryption parameter' in str(excinfo.value)
 
+    with pytest.raises(ValueError) as excinfo:
+        wrap_width_not_integer = {
+            'server': 'smtp.example.com',
+            'server_port': 123,
+            'encryption': 'ssl',
+            'username': 'exampleuser',
+            'passphrase': 'example',
+            'recipient': 'foo@example.com',
+            'sender': 'bar@example.com',
+            'wrap_width': 'not_an_integer'}
+        mailer = bote.Mailer(wrap_width_not_integer)
+    assert 'wrap_width is not an integer!' in str(excinfo.value)
 
 def test_missing_username():
     # username set to None

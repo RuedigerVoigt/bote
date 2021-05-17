@@ -203,3 +203,17 @@ class Mailer:
         except Exception:
             logging.exception('Problem sending Mail!', exc_info=True)
             raise
+
+    def send_mail_to_admin(self,
+                           message_subject: str,
+                           message_text: str) -> None:
+        """If a dictionary is used for recipient and if it contains an
+           admin key: send an email to the corresponding address."""
+        if type(self.recipient) != dict or 'admin' not in self.recipient:
+            raise ValueError('Mail address for admin not set with init!')
+        self.send_mail(
+            message_subject,
+            message_text,
+            # Silence error as this is ensured to be a dictionary / not string:
+            self.recipient['admin']  # type: ignore
+            )

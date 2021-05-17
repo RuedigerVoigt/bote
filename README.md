@@ -10,7 +10,7 @@
 * Extensive testing
 * Type-Hints in the code ([PEP 484](https://www.python.org/dev/peps/pep-0484/))
 * Good error messages
-* Automatically wrap messages to 80 characters.
+* Automatically wrap messages preserving intentional line-breaks.
 * Modularity
 
 ## How to use it
@@ -37,6 +37,10 @@ mailer = bote.Mailer(mail_settings)
 mailer.send_mail('Test bote',  # subject
                  'It worked!'  # mail body
                  )
+
+# If the setting recipient is a dictionary and contains
+# an admin key:
+mailer.send_mail_to_admin('Test', 'Message for the admin')
 ```
 
 All parameters except `recipient` and `sender` are optional as `bote` has defaults for all others:
@@ -50,6 +54,7 @@ Parameter | Default Value
 `passphrase`| `None`
 `wrap_width`| `80`
 
+The parameter `recipient` can either be an email address as a string or a dictionary. In the later case, this should have a `default` key with the standard recipient as value. Otherwise the recipient has to be set for every message. If it contains an `admin` key, the shorthand command `send_mail_to_admin` can be used.
 
 ### Keeping Your Credentials Save
 

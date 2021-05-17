@@ -4,6 +4,7 @@
 
 * Make compatible with the newest version of its sister project `userprovided`. (Older versions still work.)
 * The optional parameter `wrap_width` allows you to set after how many characters a line is wrapped. (Defaults to 80).
+* The parameter `recipient` can now be either a string or a dictionary. If it is a string, that address will be used as a recipient as long that is not overwritten. In case you use a dictionary, the behavior is the same if you defined a key named `default`. Defining an additional `admin` key allows you to use the new `send_mail_to_admin` command.
 
 ## Version 1.0.0 stable (2021-01-30)
 

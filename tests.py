@@ -80,6 +80,55 @@ def test_send_mail(mocker):
     # mailer.send_mail('random subject', 'random content')
 
 
+def test_send_mail_to_admin(mocker):
+    # False, but 'valid' settings
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'exampleuser',
+        'passphrase': 'example',
+        'recipient': {
+            'default': 'foo@example.com',
+            'admin': 'admin@example.com'},
+        'sender': 'bar@example.com'}
+    mailer = bote.Mailer(mail_settings)
+    # ############### PATCH smtplib ##################
+    # as we do not want to actually send an email
+    mocker.patch('smtplib.SMTP')
+    # send_mail: standard
+    mailer.send_mail_to_admin('random subject', 'random content')
+
+
+def test_send_mail_to_admin_missing_admin():
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'exampleuser',
+        'passphrase': 'example',
+        'recipient': {
+            'default': 'foo@example.com'},
+        'sender': 'bar@example.com'}
+    mailer = bote.Mailer(mail_settings)
+    with pytest.raises(ValueError) as excinfo:
+        mailer.send_mail_to_admin('random subject', 'random content')
+
+
+def test_send_mail_to_admin_no_dict():
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'exampleuser',
+        'passphrase': 'example',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
+    mailer = bote.Mailer(mail_settings)
+    with pytest.raises(ValueError) as excinfo:
+        mailer.send_mail_to_admin('random subject', 'random content')
+
+
 def test_enforce_crypto():
     with pytest.raises(ValueError) as excinfo:
         external_but_no_encryption = {

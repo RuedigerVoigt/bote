@@ -3,7 +3,6 @@
 
 """ Send email """
 
-from email import utils as email_utils
 from email.message import EmailMessage
 import logging
 import smtplib
@@ -148,6 +147,9 @@ class Mailer:
                 raise ValueError('Invalid value for overwrite_recipient')
             logging.debug('Overwritten mail recipient for this mail')
             recipient = overwrite_recipient
+
+        if not recipient:
+            raise ValueError('No recipient provided!')
 
         if message_subject == '' or message_subject is None:
             raise ValueError('Mails need a subject line. Otherwise they' +

@@ -66,13 +66,13 @@ class Mailer:
             raise ValueError('Invalid value for the encryption parameter!')
         # Enforce encryption if the connection is not to localhost:
         if not self.is_local and self.encryption == 'off':
-            raise ValueError('Connection is not to localhost, ' +
-                             'but an encryption method is not set!')
+            raise ValueError(
+                'Connection is not local, but no encryption method is set!')
 
         self.server_port = mail_settings.get('server_port', None)
         if self.server_port:
             if not isinstance(self.server_port, int):
-                raise ValueError('Port must be integer')
+                raise ValueError('Port is not an integer!')
             if not (0 < self.server_port < 65536):
                 raise ValueError('Port must be integer (0 to 65535)')
         if not self.is_local and not self.server_port:
@@ -105,14 +105,13 @@ class Mailer:
             for key in self.recipient:
                 value = self.recipient[key]
                 mails_to_check = email_utils.getaddresses(value)
-            
+
         elif type(self.recipient) == str:
             if not userprovided.mail.is_email(str(self.recipient)):
                 raise ValueError('recipient is not a valid email!')
         else:
             raise ValueError(
                 'Parameter recipient must be either string or dictionary.')
-
 
         self.sender = mail_settings['sender']
         if not userprovided.mail.is_email(self.sender):
@@ -148,7 +147,6 @@ class Mailer:
                 recipient = self.recipient
         elif userprovided.mail.is_email(overwrite_recipient):
             recipient = overwrite_recipient
-
 
         if overwrite_recipient:
             if userprovided.mail.is_email(overwrite_recipient):

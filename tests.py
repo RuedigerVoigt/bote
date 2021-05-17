@@ -91,7 +91,7 @@ def test_enforce_crypto():
             'recipient': 'foo@example.com',
             'sender': 'bar@example.com'}
         mailer = bote.Mailer(external_but_no_encryption)
-    assert 'Connection is not to localhost' in str(excinfo.value)
+    assert 'Connection is not local' in str(excinfo.value)
 
 
 def test_invalid_in_combination():
@@ -156,6 +156,18 @@ def test_invalid_parameters():
     assert 'must be' in str(excinfo.value)
 
     with pytest.raises(ValueError) as excinfo:
+        port_not_int = {
+            'server': 'smtp.example.com',
+            'server_port': 'foo',
+            'encryption': 'ssl',
+            'username': 'exampleuser',
+            'passphrase': 'example',
+            'recipient': 'bar@example.com',
+            'sender': 'foo@example.com'}
+        mailer = bote.Mailer(port_not_int)
+    assert 'Port is not an integer!' in str(excinfo.value)
+
+    with pytest.raises(ValueError) as excinfo:
         port_out_of_range = {
             'server': 'smtp.example.com',
             'server_port': 999999999999,
@@ -166,6 +178,7 @@ def test_invalid_parameters():
             'sender': 'foo@example.com'}
         mailer = bote.Mailer(port_out_of_range)
     assert 'Port must be integer (0 to 65535)' in str(excinfo.value)
+
     with pytest.raises(ValueError) as excinfo:
         unknown_encryption = {
             'server': 'smtp.example.com',

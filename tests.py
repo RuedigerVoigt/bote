@@ -13,7 +13,7 @@ Source: https://github.com/RuedigerVoigt/bote
 (c) 2020-2021 Rüdiger Voigt
 Released under the Apache License 2.0
 """
-
+import logging
 import smtplib
 import unittest.mock
 
@@ -203,6 +203,21 @@ def test_invalid_parameters():
             'wrap_width': 'not_an_integer'}
         mailer = bote.Mailer(wrap_width_not_integer)
     assert 'wrap_width is not an integer!' in str(excinfo.value)
+
+
+def test_logging(caplog):
+    caplog.set_level(logging.INFO)
+    recipient_dict_without_default_key = {
+        'server': 'smtp.example.com',
+        'server_port': 123,
+        'encryption': 'ssl',
+        'username': 'exampleuser',
+        'passphrase': 'example',
+        'recipient': {'foo': 'bar@example.com'},
+        'sender': 'foo@example.com'}
+    mailer = bote.Mailer(recipient_dict_without_default_key)
+    assert "No default key" in caplog.text
+
 
 def test_missing_username():
     # username set to None

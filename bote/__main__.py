@@ -90,6 +90,7 @@ class Mailer:
         if not self.passphrase:
             logging.debug('Parameter passphrase is empty.')
 
+        self.default_recipient: str = ''
         self.recipient: Union[str, dict] = mail_settings['recipient']
 
         if type(self.recipient) == dict:
@@ -98,15 +99,18 @@ class Mailer:
 
             # Warn if there is no default key
             try:
-                self.recipient['default']
+                # Silence error as type is ensured:
+                self.default_recipient = self.recipient['default']  # type: ignore
             except KeyError:
                 logging.warning("No default key in recipient dictionary!")
 
-        # TO DO: check for all recipient keys if mailadresses are valid
+            # TO DO: check for all recipient keys if mailadresses are valid
 
         elif type(self.recipient) == str:
             if not userprovided.mail.is_email(str(self.recipient)):
                 raise ValueError('recipient is not a valid email!')
+            # Silence error as type is ensured:
+            self.default_recipient = self.recipient  # type: ignore
         else:
             raise ValueError(
                 'Parameter recipient must be either string or dictionary.')
@@ -138,24 +142,12 @@ class Mailer:
 
         recipient: str = ''
         if not overwrite_recipient:
-            if type(self.recipient) == dict:
-                try:
-                    recipient = self.recipient['default']
-                except KeyError as missing_default_key:
-                    raise ValueError(
-                        'No default recipient and mail address not overwritten!'
-                        ) from missing_default_key
-            else:
-                recipient = self.recipient
-        elif userprovided.mail.is_email(overwrite_recipient):
-            recipient = overwrite_recipient
-
-        if overwrite_recipient:
-            if userprovided.mail.is_email(overwrite_recipient):
-                recipient = overwrite_recipient
-                logging.debug('Overwritten mail recipient for this mail')
-            else:
+            recipient = self.default_recipient
+        else:
+            if not userprovided.mail.is_email(overwrite_recipient):
                 raise ValueError('Invalid value for overwrite_recipient')
+            logging.debug('Overwritten mail recipient for this mail')
+            recipient = overwrite_recipient
 
         if message_subject == '' or message_subject is None:
             raise ValueError('Mails need a subject line. Otherwise they' +

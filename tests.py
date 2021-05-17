@@ -165,7 +165,7 @@ def test_invalid_parameters():
             'recipient': 'bar@example.com',
             'sender': 'foo@example.com'}
         mailer = bote.Mailer(port_out_of_range)
-    assert 'Port must be integer (0 to 65536)' in str(excinfo.value)
+    assert 'Port must be integer (0 to 65535)' in str(excinfo.value)
     with pytest.raises(ValueError) as excinfo:
         unknown_encryption = {
             'server': 'smtp.example.com',

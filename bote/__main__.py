@@ -3,12 +3,13 @@
 
 """ Send email """
 
+from email import utils as email_utils
 from email.message import EmailMessage
 import logging
 import smtplib
 import ssl
 import textwrap
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 # sister-projects:
 import compatibility
@@ -70,8 +71,10 @@ class Mailer:
 
         self.server_port = mail_settings.get('server_port', None)
         if self.server_port:
-            if not userprovided.port.port_in_range(self.server_port):
-                raise ValueError('Port must be integer (0 to 65536)')
+            if not isinstance(self.server_port, int):
+                raise ValueError('Port must be integer')
+            if not (0 < self.server_port < 65536):
+                raise ValueError('Port must be integer (0 to 65535)')
         if not self.is_local and not self.server_port:
             raise ValueError(
                 'Provide a port if you connect to a remote SMTP server.')
@@ -86,16 +89,30 @@ class Mailer:
         if not self.passphrase:
             logging.debug('Parameter passphrase is empty.')
 
-        self.recipient = mail_settings['recipient']
-        if type(self.recipient) not in [str, dict]:
-            raise ValueError(
-                'Parameter recipient must be either string or dictionary.')
+        self.recipient: Union[str, dict] = mail_settings['recipient']
 
         if type(self.recipient) == dict:
             if len(self.recipient) == 0:
                 raise ValueError('Dictionary recipient is empty.')
-        elif not userprovided.mail.is_email(self.recipient):
-            raise ValueError('recipient is not a valid email!')
+
+            # Warn if there is no default key
+            try:
+                self.recipient['default']
+            except KeyError:
+                logging.warning("No default key in recipient dictionary!")
+
+            # check if the value for each key is vaild
+            for key in self.recipient:
+                value = self.recipient[key]
+                mails_to_check = email_utils.getaddresses(value)
+            
+        elif type(self.recipient) == str:
+            if not userprovided.mail.is_email(str(self.recipient)):
+                raise ValueError('recipient is not a valid email!')
+        else:
+            raise ValueError(
+                'Parameter recipient must be either string or dictionary.')
+
 
         self.sender = mail_settings['sender']
         if not userprovided.mail.is_email(self.sender):
@@ -118,7 +135,21 @@ class Mailer:
            With overwrite_receiver you change the recipient for this mail."""
         # pylint: disable=too-many-branches
 
-        recipient = self.recipient
+        recipient: str = ''
+        if not overwrite_recipient:
+            if type(self.recipient) == dict:
+                try:
+                    recipient = self.recipient['default']
+                except KeyError as missing_default_key:
+                    raise ValueError(
+                        'No default recipient and mail address not overwritten!'
+                        ) from missing_default_key
+            else:
+                recipient = self.recipient
+        elif userprovided.mail.is_email(overwrite_recipient):
+            recipient = overwrite_recipient
+
+
         if overwrite_recipient:
             if userprovided.mail.is_email(overwrite_recipient):
                 recipient = overwrite_recipient

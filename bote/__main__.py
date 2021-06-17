@@ -137,8 +137,8 @@ class Mailer:
             raise ValueError('Recipient is not valid')
 
         if message_subject == '' or message_subject is None:
-            raise ValueError('Mails need a subject line to avoid ' +
-                             'being classified as spam.')
+            raise ValueError(
+                'Mails without subject will likely be classified as spam.')
 
         if message_text == '' or message_text is None:
             raise ValueError('No mail content supplied.')

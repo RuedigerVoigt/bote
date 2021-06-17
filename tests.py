@@ -37,10 +37,10 @@ def test_send_mail(mocker):
     # Missing subject line
     with pytest.raises(ValueError) as excinfo:
         mailer.send_mail('', 'random text')
-    assert 'Mails need a subject line' in str(excinfo.value)
+    assert 'classified as spam' in str(excinfo.value)
     with pytest.raises(ValueError) as excinfo:
         mailer.send_mail(None, 'random text')
-    assert 'Mails need a subject line' in str(excinfo.value)
+    assert 'classified as spam' in str(excinfo.value)
 
     # Missing mail body
     with pytest.raises(ValueError) as excinfo:

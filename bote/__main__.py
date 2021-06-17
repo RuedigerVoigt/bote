@@ -55,19 +55,16 @@ class Mailer:
         # Provide default values for missing ones with defaultdict:
 
         self.server: str = mail_settings.get('server', 'localhost')
-        self.is_local = False
-        if self.server in ('localhost', '127.0.0.1', '::1'):
-            self.is_local = True
+        self.is_local = bool(self.server in ('localhost', '127.0.0.1', '::1'))
 
         # Encryption defaults to 'off' as the default for server is localhost.
         self.encryption: str = mail_settings.get('encryption', 'off')
-        # There are three valid values:
+
         if self.encryption not in ('off', 'starttls', 'ssl'):
             raise ValueError('Invalid value for the encryption parameter!')
         # Enforce encryption if the connection is not to localhost:
         if not self.is_local and self.encryption == 'off':
-            raise ValueError(
-                'Connection is not local, but no encryption method is set!')
+            raise ValueError('Connection is not local, but unencrypted!')
 
         self.server_port = mail_settings.get('server_port', None)
         if self.server_port:
@@ -148,8 +145,8 @@ class Mailer:
             raise ValueError('No recipient provided!')
 
         if message_subject == '' or message_subject is None:
-            raise ValueError('Mails need a subject line. Otherwise they' +
-                             'most likely will be classified as spam.')
+            raise ValueError('Mails need a subject line to avoid ' +
+                             'being classified as spam.')
 
         if message_text == '' or message_text is None:
             raise ValueError('No mail content supplied.')

@@ -60,7 +60,7 @@ def test_send_mail(mocker):
     # overwrite recipient with invalid value
     with pytest.raises(ValueError) as excinfo:
         mailer.send_mail('random subject', 'random content', 'not_valid')
-    assert 'Invalid value for overwrite_recipient' in str(excinfo.value)
+    assert 'Recipient is not valid' in str(excinfo.value)
     # switch OFF encryption and switch to localhost
     mail_settings['encryption'] = 'off'
     mail_settings['server'] = 'localhost'

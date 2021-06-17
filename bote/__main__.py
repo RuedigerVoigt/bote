@@ -132,17 +132,9 @@ class Mailer:
            With overwrite_receiver you change the recipient for this mail."""
         # pylint: disable=too-many-branches
 
-        recipient: str = ''
-        if not overwrite_recipient:
-            recipient = self.default_recipient
-        else:
-            if not userprovided.mail.is_email(overwrite_recipient):
-                raise ValueError('Invalid value for overwrite_recipient')
-            logging.debug('Overwritten mail recipient for this mail')
-            recipient = overwrite_recipient
-
-        if not recipient:
-            raise ValueError('No recipient provided!')
+        recipient: str = overwrite_recipient if overwrite_recipient else self.default_recipient
+        if not userprovided.mail.is_email(recipient):
+            raise ValueError('Recipient is not valid')
 
         if message_subject == '' or message_subject is None:
             raise ValueError('Mails need a subject line to avoid ' +

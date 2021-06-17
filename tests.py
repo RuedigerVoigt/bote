@@ -214,7 +214,7 @@ def test_invalid_parameters():
             'recipient': 'bar@example.com',
             'sender': 'foo@example.com'}
         mailer = bote.Mailer(port_not_int)
-    assert 'Port is not an integer!' in str(excinfo.value)
+    assert 'Port has to be an integer' in str(excinfo.value)
 
     with pytest.raises(ValueError) as excinfo:
         port_out_of_range = {

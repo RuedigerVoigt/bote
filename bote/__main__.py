@@ -71,11 +71,9 @@ class Mailer:
 
         self.server_port = mail_settings.get('server_port', None)
         if self.server_port:
-            if not isinstance(self.server_port, int):
-                raise ValueError('Port is not an integer!')
-            if not (0 < self.server_port < 65536):
+            if not userprovided.parameters.is_port(self.server_port):
                 raise ValueError('Port must be integer (0 to 65535)')
-        if not self.is_local and not self.server_port:
+        elif not self.is_local:
             raise ValueError(
                 'Provide a port if you connect to a remote SMTP server.')
 

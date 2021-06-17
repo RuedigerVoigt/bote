@@ -1,5 +1,9 @@
 # Changelog / History
 
+## UPCOMING
+
+* Tests now also run with Python `3.10.0-beta.2`
+
 ## Version 1.1.0 stable (2021-05-17)
 
 * Make compatible with the newest version of its sister project `userprovided`. (Older versions still work.)

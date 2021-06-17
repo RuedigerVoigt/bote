@@ -158,9 +158,8 @@ class Mailer:
             msg['To'] = recipient
 
             if self.encryption == 'off':
-                s = smtplib.SMTP(self.server)
-                s.send_message(msg)
-                s.quit()
+                with smtplib.SMTP(self.server) as s:
+                    s.send_message(msg)
             elif self.encryption == 'ssl':
                 with smtplib.SMTP_SSL(self.server,
                                       self.server_port,

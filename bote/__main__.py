@@ -98,8 +98,7 @@ class Mailer:
 
             # Warn if there is no default key
             try:
-                # Silence error as type is ensured:
-                self.default_recipient = self.recipient['default']  # type: ignore
+                self.default_recipient = self.recipient['default']
             except KeyError:
                 logging.warning("No default key in recipient dictionary!")
 
@@ -108,8 +107,7 @@ class Mailer:
         elif type(self.recipient) == str:
             if not userprovided.mail.is_email(str(self.recipient)):
                 raise ValueError('recipient is not a valid email!')
-            # Silence error as type is ensured:
-            self.default_recipient = self.recipient  # type: ignore
+            self.default_recipient = self.recipient
         else:
             raise ValueError(
                 'Parameter recipient must be either string or dictionary.')
@@ -214,6 +212,5 @@ class Mailer:
         self.send_mail(
             message_subject,
             message_text,
-            # Silence error as this is ensured to be a dictionary / not string:
-            self.recipient['admin']  # type: ignore
+            self.recipient['admin']
             )

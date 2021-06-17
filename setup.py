@@ -21,7 +21,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     python_requires=">=3.6",
     install_requires=["compatibility>=0.9.0",
-                      "userprovided>=0.9.0"],
+                      "userprovided>=0.9.1"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",

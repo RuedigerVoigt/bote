@@ -2,7 +2,7 @@
 
 ## UPCOMING
 
-* Tests now also run with Python `3.10.0-beta.2`
+* Tests now also run with Python `3.10.0-beta.3`
 
 ## Version 1.1.0 stable (2021-05-17)
 

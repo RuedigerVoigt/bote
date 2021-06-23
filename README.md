@@ -4,7 +4,7 @@
 ![Last commit](https://img.shields.io/github/last-commit/RuedigerVoigt/bote)
 ![pypi version](https://img.shields.io/pypi/v/bote)
 [![Downloads](https://pepy.tech/badge/bote)](https://pepy.tech/project/bote)
-[![Coverage](https://img.shields.io/badge/coverage-86%25-yellow)](https://www.ruediger-voigt.eu/coverage/bote/index.html)
+[![Coverage](https://img.shields.io/badge/coverage-97%25-brightgreen)](https://www.ruediger-voigt.eu/coverage/bote/index.html)
 
 "Bote" is German for messenger or courier. The `bote` library sends plain-text email from localhost or a remote SMTP server. The base functionality is in the standard library, but this package improves upon that in several ways:
 * Enforce that any connection to a SMTP server - except `localhost` / `127.0.0.1` / `::1` - is encrypted. (Of course this does not influence how the SMTP server sends the message to the recipient.)

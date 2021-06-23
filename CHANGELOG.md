@@ -1,11 +1,14 @@
 # Changelog / History
 
-## Version 1.1.1 stable (2021-06-23)
+## Version 1.1.1 stable (2021-06-24)
 
 * Small code improvements.
-* Tests now also run with Python `3.10.0-beta.3` on Ubuntu.
-* Although the code should be platform independent, tests are now also run with MacOS and Windows VMs to be sure.
 * Updated dependencies.
+* Impoved code testing:
+  * Tests now also run with Python `3.10.0-beta.3` on Ubuntu.
+  * Although the code should be platform independent, tests are now also run with MacOS and Windows VMs to be sure.
+  * Improved test coverage from 85 to 97%.
+
 
 ## Version 1.1.0 stable (2021-05-17)
 

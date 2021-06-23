@@ -15,11 +15,10 @@ Released under the Apache License 2.0
 """
 import logging
 import smtplib
-import unittest.mock
+from unittest.mock import patch
 
 
 import pytest
-import pytest_mock
 import bote
 
 
@@ -366,3 +365,65 @@ def test_missing_required_parameters():
             'recipient': 'foo@example.com'}
         mailer = bote.Mailer(missing_sender)
     assert 'Necessary key' in str(excinfo.value)
+
+# #############################################################################
+# TEST SMTLIB EXCEPTIONS
+# #############################################################################
+
+# some smtplib exceptions need parameters to be called, see:
+# https://github.com/python/cpython/blob/main/Lib/smtplib.py
+
+false_but_valid_mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'exampleuser',
+        'passphrase': 'example',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
+
+
+def test_send_mail_AUTH_FAILURE(caplog):
+    with patch('bote.Mailer._Mailer__send_starttls',
+               side_effect=smtplib.SMTPAuthenticationError(123, 'foo')):
+        mailer = bote.Mailer(false_but_valid_mail_settings)
+        with pytest.raises(smtplib.SMTPAuthenticationError):
+            mailer.send_mail('random subject', 'random content')
+        assert "SMTP authentication failed" in caplog.text
+
+
+def test_send_mail_SENDER_REFUSED(caplog):
+    with patch('bote.Mailer._Mailer__send_starttls',
+               side_effect=smtplib.SMTPSenderRefused(123, 'foo', 'foo')):
+        mailer = bote.Mailer(false_but_valid_mail_settings)
+        with pytest.raises(smtplib.SMTPSenderRefused):
+            mailer.send_mail('random subject', 'random content')
+        assert "SMTP server refused sender" in caplog.text
+
+
+def test_send_mail_DISCONNECT(caplog):
+    with patch('bote.Mailer._Mailer__send_starttls',
+               side_effect=smtplib.SMTPServerDisconnected):
+        mailer = bote.Mailer(false_but_valid_mail_settings)
+        with pytest.raises(smtplib.SMTPServerDisconnected):
+            mailer.send_mail('random subject', 'random content')
+        assert "SMTP server unexpectedly disconnected" in caplog.text
+
+
+def test_send_mail_GENERIC_SMTP(caplog):
+    with patch('bote.Mailer._Mailer__send_starttls',
+               side_effect=smtplib.SMTPException):
+        mailer = bote.Mailer(false_but_valid_mail_settings)
+        with pytest.raises(smtplib.SMTPException):
+            mailer.send_mail('random subject', 'random content')
+        assert "Problem sending mail" in caplog.text
+
+
+def test_send_mail_GENERIC(caplog):
+    with patch('bote.Mailer._Mailer__send_starttls',
+               side_effect=Exception):
+        mailer = bote.Mailer(false_but_valid_mail_settings)
+        with pytest.raises(Exception):
+            mailer.send_mail('random subject', 'random content')
+        assert "Problem sending mail" in caplog.text
+

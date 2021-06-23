@@ -126,6 +126,27 @@ class Mailer:
         # https://docs.python.org/3/library/ssl.html#ssl-security
         self.context = ssl.create_default_context()
 
+    def __send_unencrypted(self,
+                           msg: EmailMessage) -> None:
+        with smtplib.SMTP(self.server) as s:
+            s.send_message(msg)
+
+    def __send_ssl(self,
+                   msg: EmailMessage) -> None:
+        with smtplib.SMTP_SSL(self.server,
+                              self.server_port,
+                              context=self.context) as s:
+            s.login(self.username, self.passphrase)
+            s.send_message(msg)
+
+    def __send_starttls(self,
+                        msg: EmailMessage) -> None:
+        with smtplib.SMTP(self.server,
+                          self.server_port) as s:
+            s.starttls(context=self.context)
+            s.login(self.username, self.passphrase)
+            s.send_message(msg)
+
     def send_mail(self,
                   message_subject: str,
                   message_text: str,
@@ -161,22 +182,11 @@ class Mailer:
             msg['To'] = recipient
 
             if self.encryption == 'off':
-                with smtplib.SMTP(self.server) as s:
-                    s.send_message(msg)
+                self.__send_unencrypted(msg)
             elif self.encryption == 'ssl':
-                with smtplib.SMTP_SSL(self.server,
-                                      self.server_port,
-                                      context=self.context) as s:
-                    s.login(self.username, self.passphrase)
-                    s.send_message(msg)
+                self.__send_ssl(msg)
             else:
-                # i.e. starttls
-                with smtplib.SMTP(self.server,
-                                  self.server_port) as s:
-                    s.starttls(context=self.context)
-                    s.login(self.username, self.passphrase)
-                    s.send_message(msg)
-
+                self.__send_starttls(msg)
         except smtplib.SMTPAuthenticationError:
             logging.exception(
                 'SMTP authentication failed: check username / passphrase.')
@@ -185,10 +195,10 @@ class Mailer:
             logging.exception('SMTP server refused sender.')
             raise
         except smtplib.SMTPServerDisconnected:
-            logging.exception('SMTP server unexpectedly disconnect.')
+            logging.exception('SMTP server unexpectedly disconnected.')
             raise
-        except Exception:
-            logging.exception('Problem sending Mail!', exc_info=True)
+        except (smtplib.SMTPException, Exception):
+            logging.exception('Problem sending mail!', exc_info=True)
             raise
 
     def send_mail_to_admin(self,

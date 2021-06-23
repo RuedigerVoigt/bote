@@ -20,7 +20,7 @@ setuptools.setup(
     package_data={"bote": ["py.typed"]},
     packages=setuptools.find_packages(),
     python_requires=">=3.6",
-    install_requires=["compatibility>=0.9.0",
+    install_requires=["compatibility>=1.0.0",
                       "userprovided>=0.9.1"],
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -30,6 +30,9 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: MacOS :: MacOS X",
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Topic :: System :: Monitoring",

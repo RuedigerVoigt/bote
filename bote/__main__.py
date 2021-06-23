@@ -39,7 +39,10 @@ class Mailer:
             nag_over_update={
                     'nag_days_after_release': 365,
                     'nag_in_hundred': 100},
-            language_messages='en'
+            language_messages='en',
+            system_support={
+                'full': {'Linux', 'Windows', 'MacOS'}
+            }
         )
 
         userprovided.parameters.validate_dict_keys(

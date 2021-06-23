@@ -194,6 +194,9 @@ class Mailer:
         except smtplib.SMTPSenderRefused:
             logging.exception('SMTP server refused sender.')
             raise
+        except smtplib.SMTPRecipientsRefused:
+            logging.exception('SMTP server refused recipient.')
+            raise
         except smtplib.SMTPServerDisconnected:
             logging.exception('SMTP server unexpectedly disconnected.')
             raise

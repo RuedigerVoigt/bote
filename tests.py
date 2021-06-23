@@ -401,6 +401,15 @@ def test_send_mail_SENDER_REFUSED(caplog):
         assert "SMTP server refused sender" in caplog.text
 
 
+def test_send_mail_RECIPIENT_REFUSED(caplog):
+    with patch('bote.Mailer._Mailer__send_starttls',
+               side_effect=smtplib.SMTPRecipientsRefused(dict())):
+        mailer = bote.Mailer(false_but_valid_mail_settings)
+        with pytest.raises(smtplib.SMTPRecipientsRefused):
+            mailer.send_mail('random subject', 'random content')
+        assert "SMTP server refused recipient" in caplog.text
+
+
 def test_send_mail_DISCONNECT(caplog):
     with patch('bote.Mailer._Mailer__send_starttls',
                side_effect=smtplib.SMTPServerDisconnected):

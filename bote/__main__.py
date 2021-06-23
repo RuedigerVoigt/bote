@@ -133,8 +133,8 @@ class Mailer:
 
     def __send_ssl(self,
                    msg: EmailMessage) -> None:
-        with smtplib.SMTP_SSL(self.server,
-                              self.server_port,
+        with smtplib.SMTP_SSL(host=self.server,
+                              port=self.server_port,
                               context=self.context) as s:
             s.login(self.username, self.passphrase)
             s.send_message(msg)

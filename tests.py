@@ -94,7 +94,7 @@ def test_missing_passphrase():
     mailer = bote.Mailer(mail_settings)
 
 
-def test_logging_mssing_default_key(caplog):
+def test_logging_missing_default_key(caplog):
     caplog.set_level(logging.INFO)
     recipient_dict_without_default_key = {
         'server': 'smtp.example.com',
@@ -272,17 +272,18 @@ def test_send_mail(mocker):
     mailer = bote.Mailer(mail_settings)
     mailer.send_mail('random subject', 'random content')
     # Switch to SSL encryption and not localhost
-    mail_settings = {
+    ssl_mail_settings = {
         'server': 'smtp.example.com',
-        'server_port': 587,
+        'server_port': 465,
         'encryption': 'ssl',
         'username': 'exampleuser',
         'passphrase': 'example',
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com'}
-    mailer = bote.Mailer(mail_settings)
+    ssl_mailer = bote.Mailer(ssl_mail_settings)
+    mocker.patch('smtplib.SMTP')
     # TO DO: check this (could be system dependent or a bug):
-    # mailer.send_mail('random subject', 'random content')
+    #ssl_mailer.send_mail('random subject', 'random content')
 
 
 def test_send_mail_to_admin(mocker):

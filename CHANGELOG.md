@@ -1,5 +1,9 @@
 # Changelog / History
 
+## upcoming
+
+* Run tests for Python 3.10 with Beta 4 instead of Beta 3.
+
 ## Version 1.1.1 stable (2021-06-24)
 
 * Small code improvements.

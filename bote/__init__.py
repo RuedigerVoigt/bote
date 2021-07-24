@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""A Python library to send email. Enforces encryption -
+   if not sending via localhost."""
+
 from bote.__main__ import Mailer
 from bote import _version
 

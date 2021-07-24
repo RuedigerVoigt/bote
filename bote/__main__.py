@@ -21,6 +21,7 @@ from bote import _version as version
 class Mailer:
     "Class of bote to send email"
     # pylint: disable=too-few-public-methods
+    # pylint: disable=too-many-branches
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=unidiomatic-typecheck
 
@@ -106,7 +107,7 @@ class Mailer:
 
         elif type(self.recipient) == str:
             if not userprovided.mail.is_email(str(self.recipient)):
-                raise ValueError('recipient is not a valid email!')
+                raise err.NotAnEmail('recipient is not a valid email!')
             self.default_recipient = self.recipient
         else:
             raise ValueError(
@@ -114,7 +115,7 @@ class Mailer:
 
         self.sender = mail_settings['sender']
         if not userprovided.mail.is_email(self.sender):
-            raise ValueError('sender is not a valid email!')
+            raise err.NotAnEmail('sender is not a valid email!')
 
         self.wrap_width = mail_settings.get('wrap_width', 80)
         if not isinstance(self.wrap_width, int):

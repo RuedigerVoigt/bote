@@ -109,7 +109,7 @@ def test_logging_missing_default_key(caplog):
 
 
 def test_invalid_parameters():
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(bote.err.NotAnEmail) as excinfo:
         sender_is_not_email = {
             'server': 'smtp.example.com',
             'server_port': 123,
@@ -118,9 +118,9 @@ def test_invalid_parameters():
             'passphrase': 'example',
             'recipient': 'foo@example.com',
             'sender': 'not_an_email'}
-        mailer = bote.Mailer(sender_is_not_email)
+        _ = bote.Mailer(sender_is_not_email)
     assert 'sender is not a valid email!' in str(excinfo.value)
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(bote.err.NotAnEmail) as excinfo:
         recipient_is_not_email = {
             'server': 'smtp.example.com',
             'server_port': 123,
@@ -129,7 +129,7 @@ def test_invalid_parameters():
             'passphrase': 'example',
             'recipient': 'not_an_email',
             'sender': 'foo@example.com'}
-        mailer = bote.Mailer(recipient_is_not_email)
+        _ = bote.Mailer(recipient_is_not_email)
     assert 'recipient is not a valid email!' in str(excinfo.value)
 
     with pytest.raises(ValueError) as excinfo:

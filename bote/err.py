@@ -21,6 +21,11 @@ class UnencryptedRemoteConnection(BoteException):
        do not encrypt the connection to it."""
 
 
+class NotAnEmail(BoteException):
+    """Raised if bote expects an email address, but the provided value
+       is not a valid email address."""
+
+
 class MissingSubject(BoteException, ValueError):
     "Raised if you try to send an email without subject line."
 

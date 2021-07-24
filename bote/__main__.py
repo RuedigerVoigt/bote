@@ -14,6 +14,7 @@ from typing import Any, Dict, Optional, Union
 import compatibility
 import userprovided
 
+from bote import err
 from bote import _version as version
 
 
@@ -67,7 +68,8 @@ class Mailer:
             raise ValueError('Invalid value for the encryption parameter!')
         # Enforce encryption if the connection is not to localhost:
         if not self.is_local and self.encryption == 'off':
-            raise ValueError('Connection is not local, but unencrypted!')
+            raise err.UnencryptedRemoteConnection(
+                'Connection is not local, but unencrypted!')
 
         self.server_port = mail_settings.get('server_port', None)
         if self.server_port:
@@ -161,11 +163,11 @@ class Mailer:
             raise ValueError('Recipient is not valid')
 
         if message_subject == '' or message_subject is None:
-            raise ValueError(
+            raise err.MissingSubject(
                 'Mails without subject will likely be classified as spam.')
 
         if message_text == '' or message_text is None:
-            raise ValueError('No mail content supplied.')
+            raise err.MissingMailContent('No mail content supplied.')
 
         wrap = textwrap.TextWrapper(width=self.wrap_width)
 

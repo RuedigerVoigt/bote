@@ -46,7 +46,7 @@ def test_missing_required_parameters():
             'username': 'exampleuser',
             'passphrase': 'example',
             'recipient': 'foo@example.com'}
-        mailer = bote.Mailer(missing_sender)
+        _ = bote.Mailer(missing_sender)
     assert 'Necessary key' in str(excinfo.value)
 
 
@@ -69,7 +69,7 @@ def test_missing_username():
         'passphrase': 'example',
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com'}
-    mailer = bote.Mailer(mail_settings)
+    _ = bote.Mailer(mail_settings)
 
 
 def test_missing_passphrase():
@@ -91,7 +91,7 @@ def test_missing_passphrase():
         'username': 'exampleuser',
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com'}
-    mailer = bote.Mailer(mail_settings)
+    _ = bote.Mailer(mail_settings)
 
 
 def test_logging_missing_default_key(caplog):
@@ -104,7 +104,7 @@ def test_logging_missing_default_key(caplog):
         'passphrase': 'example',
         'recipient': {'foo': 'bar@example.com'},
         'sender': 'foo@example.com'}
-    mailer = bote.Mailer(recipient_dict_without_default_key)
+    _ = bote.Mailer(recipient_dict_without_default_key)
     assert "No default key" in caplog.text
 
 
@@ -220,7 +220,7 @@ def test_invalid_in_combination():
             'passphrase': 'example',
             'recipient': 'foo@example.com',
             'sender': 'bar@example.com'}
-        mailer = bote.Mailer(external_but_no_port)
+        _ = bote.Mailer(external_but_no_port)
     assert 'Provide a port' in str(excinfo.value)
 
 # #############################################################################
@@ -240,18 +240,18 @@ def test_send_mail(mocker):
         'sender': 'bar@example.com'}
     mailer = bote.Mailer(mail_settings)
     # Missing subject line
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(bote.err.MissingSubject) as excinfo:
         mailer.send_mail('', 'random text')
     assert 'classified as spam' in str(excinfo.value)
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(bote.err.MissingSubject) as excinfo:
         mailer.send_mail(None, 'random text')
     assert 'classified as spam' in str(excinfo.value)
 
     # Missing mail body
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(bote.err.MissingMailContent) as excinfo:
         mailer.send_mail('random subject', '')
     assert 'No mail content supplied.' in str(excinfo.value)
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(bote.err.MissingMailContent) as excinfo:
         mailer.send_mail('random subject', None)
     assert 'No mail content supplied.' in str(excinfo.value)
 
@@ -374,7 +374,7 @@ def test_recognize_localhost():
 
 
 def test_enforce_crypto():
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(bote.err.UnencryptedRemoteConnection) as excinfo:
         external_but_no_encryption = {
             'server': 'smtp.example.com',
             'server_port': 587,
@@ -383,7 +383,7 @@ def test_enforce_crypto():
             'passphrase': 'example',
             'recipient': 'foo@example.com',
             'sender': 'bar@example.com'}
-        mailer = bote.Mailer(external_but_no_encryption)
+        _ = bote.Mailer(external_but_no_encryption)
     assert 'Connection is not local' in str(excinfo.value)
 
 
@@ -456,4 +456,3 @@ def test_send_mail_GENERIC(caplog):
         with pytest.raises(Exception):
             mailer.send_mail('random subject', 'random content')
         assert "Problem sending mail" in caplog.text
-

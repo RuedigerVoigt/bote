@@ -1,8 +1,10 @@
 # Changelog / History
 
-## upcoming
+## Version 1.2.0 stable (2021-07-24)
 
+* Use [custom exceptions](bote/err.py).
 * Run tests for Python 3.10 with Beta 4 instead of Beta 3.
+
 
 ## Version 1.1.1 stable (2021-06-24)
 

@@ -1,8 +1,8 @@
 # Changelog / History
 
-## Upcoming
+## Version 1.2.1 stable (2021-08-05)
 
-* Marked as compatible with Python 3.10. Tests with Release Candidate 1 of Python 3.10 run flawlessly on Linux. MacOS, and Windows.
+* Marked as compatible with Python 3.10 as tests with release candidate 1 run flawlessly on Linux, MacOS, and Windows.
 
 ## Version 1.2.0 stable (2021-07-24)
 

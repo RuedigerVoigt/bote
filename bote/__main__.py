@@ -37,7 +37,7 @@ class Mailer:
             python_version_support={
                 'min_version': '3.6',
                 'incompatible_versions': [],
-                'max_tested_version': '3.9'},
+                'max_tested_version': '3.10'},
             nag_over_update={
                     'nag_days_after_release': 365,
                     'nag_in_hundred': 100},

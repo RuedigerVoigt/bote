@@ -1,5 +1,9 @@
 # Changelog / History
 
+## Upcoming
+
+* Marked as compatible with Python 3.10. Tests with Release Candidate 1 of Python 3.10 run flawlessly on Linux. MacOS, and Windows.
+
 ## Version 1.2.0 stable (2021-07-24)
 
 * Use [custom exceptions](bote/err.py).

@@ -1,5 +1,10 @@
 # Changelog / History
 
+## Upcoming
+
+* Dropped support for Python 3.6 and 3.7 due to EOL.
+* Add tests and support for Python 3.11 and 3.12.
+
 ## Version 1.2.2 stable (2021-10-10)
 
 * Tests (except mypy) now run with Python 3.10 final.

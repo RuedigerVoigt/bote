@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="bote",
-    version=f"{_version.__version__}",
+    version=_version.__version__,
     author="Rüdiger Voigt",
     author_email="projects@ruediger-voigt.eu",
     description="Send email messages and enforce encryption.",

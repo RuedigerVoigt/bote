@@ -20,6 +20,9 @@ import userprovided
 from bote import err
 from bote import _version as version
 
+# Use package-level logger for library best practices
+logger = logging.getLogger(__name__)
+
 
 class Mailer:
     "Class of bote to send email"
@@ -87,9 +90,9 @@ class Mailer:
         # not necessary - for example if the identification is host based.
         # Therfore no exception is thrown.
         if not self.username:
-            logging.debug('Parameter username is empty.')
+            logger.debug('Parameter username is empty.')
         if not self.passphrase:
-            logging.debug('Parameter passphrase is empty.')
+            logger.debug('Parameter passphrase is empty.')
 
         self.default_recipient: str = ''
         self.recipient: str | dict = mail_settings['recipient']
@@ -102,7 +105,7 @@ class Mailer:
             try:
                 self.default_recipient = self.recipient['default']
             except KeyError:
-                logging.warning("No default key in recipient dictionary!")
+                logger.warning("No default key in recipient dictionary!")
 
             # TO DO: check for all recipient keys if mailadresses are valid
 
@@ -192,20 +195,22 @@ class Mailer:
             else:
                 self.__send_starttls(msg)
         except smtplib.SMTPAuthenticationError:
-            logging.exception(
+            logger.exception(
                 'SMTP authentication failed: check username / passphrase.')
             raise
         except smtplib.SMTPSenderRefused:
-            logging.exception('SMTP server refused sender.')
+            logger.exception('SMTP server refused sender.')
             raise
         except smtplib.SMTPRecipientsRefused:
-            logging.exception('SMTP server refused recipient.')
+            logger.exception('SMTP server refused recipient.')
             raise
         except smtplib.SMTPServerDisconnected:
-            logging.exception('SMTP server unexpectedly disconnected.')
+            logger.exception('SMTP server unexpectedly disconnected.')
             raise
         except (smtplib.SMTPException, Exception):
-            logging.exception('Problem sending mail!', exc_info=True)
+            # Catch both SMTP-specific exceptions and general exceptions
+            # (e.g., network errors, SSL errors) to ensure all failures are logged
+            logger.exception('Problem sending mail!', exc_info=True)
             raise
 
     def send_mail_to_admin(self,

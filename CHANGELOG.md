@@ -8,6 +8,8 @@
  * Updated dependencies.
 * Quality:
   * Workflow ensures test coverage is at least 95%.
+* Other:
+  * Switch to package level logger.
 
 ## Version 1.2.2 stable (2021-10-10)
 

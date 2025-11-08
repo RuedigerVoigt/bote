@@ -5,6 +5,9 @@
 * Python support:
  * Drop support for Python 3.6 to 3.9 due to EOL.
  * Add tests and support for Python 3.11 to 3.14.
+ * Updated dependencies.
+* Quality:
+  * Workflow ensures test coverage is at least 95%.
 
 ## Version 1.2.2 stable (2021-10-10)
 

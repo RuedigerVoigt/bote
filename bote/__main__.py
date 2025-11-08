@@ -6,11 +6,14 @@ Source: https://github.com/RuedigerVoigt/bote
 Released under the Apache License 2.0
 """
 
+from datetime import date
 from email.message import EmailMessage
 import logging
+from pathlib import Path
 import smtplib
 import ssl
 import textwrap
+import tomllib
 from typing import Any
 
 # sister-projects:
@@ -18,10 +21,18 @@ import compatibility
 import userprovided
 
 from bote import err
-from bote import _version as version
 
 # Use package-level logger for library best practices
 logger = logging.getLogger(__name__)
+
+# Read version from pyproject.toml (single source of truth)
+_pyproject_path = Path(__file__).parent.parent / "pyproject.toml"
+with open(_pyproject_path, "rb") as f:
+    _pyproject_data = tomllib.load(f)
+    __version__ = _pyproject_data["tool"]["poetry"]["version"]
+
+# Release date for compatibility check
+_release_date = date(2025, 11, 8)
 
 
 class Mailer:
@@ -36,8 +47,8 @@ class Mailer:
 
         compatibility.Check(
             package_name='bote',
-            package_version=version.__version__,
-            release_date=version.release_date,
+            package_version=__version__,
+            release_date=_release_date,
             python_version_support={
                 'min_version': '3.10',
                 'incompatible_versions': ['3.8', '3.9'],

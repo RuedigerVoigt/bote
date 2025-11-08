@@ -1,15 +1,18 @@
 # Changelog / History
 
-## Version 2 (Upcoming)
+## Version 2.0.0 (Upcoming)
 
-* Python support:
- * Drop support for Python 3.6 to 3.9 due to EOL.
- * Add tests and support for Python 3.11 to 3.14.
- * Updated dependencies.
+* Migrated from setup.py to pyproject.toml with Poetry as build backend.
+* Python Support:
+ * Drop support for Python 3.8 and 3.9 (EOL or near EOL).
+ * Add tests and support for Python 3.10, 3.11, 3.12, 3.13, and 3.14.
+* Code modernization:
+ * Switch to package-level logger instead of root logger (library best practice).
+ * Updated dependencies: compatibility>=2.0.0 and userprovided>=2.1.1.
 * Quality:
-  * Workflow ensures test coverage is at least 95%.
-* Other:
-  * Switch to package level logger.
+ * Workflow ensures test coverage is at least 95%.
+ * Added separate flake8 linting workflow.
+ * All GitHub Actions workflows updated to latest versions.
 
 ## Version 1.2.2 stable (2021-10-10)
 

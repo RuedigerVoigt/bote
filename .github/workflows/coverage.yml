@@ -14,17 +14,11 @@ jobs:
       with:
         python-version: '3.14'
 
-    - name: Install dependencies
+    - name: Install dependencies and package
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Install test tools
-      run: |
+        pip install -e .
         pip install pytest pytest-mock pyfakefs pytest-cov
-
-    - name: Install package
-      run: pip install -e .
 
     - name: Run tests with coverage check (minimum 95%)
       run: pytest --cov=bote --cov-fail-under=95 tests.py

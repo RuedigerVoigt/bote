@@ -20,8 +20,12 @@ Guidelines:
  please check the issues page or get in contact. It is a design goal to avoid
  bloat by implementing too many features.
 
+ ### Requirements
+
+ * **Python Version:** Requires Python 3.10 or higher. We support Python 3.10, 3.11, 3.12, 3.13, and 3.14.
+ * **Build System:** The project uses Poetry and pyproject.toml for dependency management.
  * Please adhere to [PEP8](https://www.python.org/dev/peps/pep-0008/).
  * The code should include some documentation.
  * Variable names should be speaking.
  * Type hints are necessary.
-
+ * We use Python 3.10+ type hint syntax.

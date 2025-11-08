@@ -1,2 +1,0 @@
-compatibility>=2.0.0
-userprovided>=2.1.1

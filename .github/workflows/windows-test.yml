@@ -1,9 +1,5 @@
-# This workflow runs Unit-Tests for exoskeleton on Windows
-# with the two latest Python versions.
-#
-# Flake8 will be run with the Ubuntu Workflow.
-# Mypy runs separately.
-# => There is no need to repeat these here.
+# This workflow runs Unit-Tests for bote on Windows
+# with all supported Python versions.
 
 name: Windows Test
 

@@ -1,9 +1,5 @@
 # This workflow runs Unit-Tests for bote on MacOS
-# with the two latest Python versions.
-#
-# Flake8 will be run with the Ubuntu Workflow.
-# Mypy runs separately.
-# => There is no need to repeat these here.
+# with the minimum and maximum supported Python versions.
 
 name: MacOS Test
 

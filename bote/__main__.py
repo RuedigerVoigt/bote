@@ -106,7 +106,7 @@ class Mailer:
         self.passphrase = mail_settings.get('passphrase', None)
         # Even for a remote connection username and passphrase might be
         # not necessary - for example if the identification is host based.
-        # Therfore no exception is thrown.
+        # Therefore no exception is thrown.
         if not self.username:
             logger.debug('Parameter username is empty.')
         if not self.passphrase:

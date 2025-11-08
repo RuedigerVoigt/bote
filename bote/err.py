@@ -8,7 +8,7 @@ Released under the Apache License 2.0
 
 
 class BoteException(Exception):
-    "An exception speicific to bote occured"
+    "An exception specific to bote occurred"
     def __init__(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         Exception.__init__(self, *args, **kwargs)
 

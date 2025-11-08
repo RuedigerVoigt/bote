@@ -56,7 +56,7 @@ Parameter | Default Value
 
 The parameter `recipient` can either be an email address as a string or a dictionary. In the later case, this should have a `default` key with the standard recipient as value. Otherwise the recipient has to be set for every message. If it contains an `admin` key, the shorthand command `send_mail_to_admin` can be used.
 
-### Keeping Your Credentials Save
+### Keeping Your Credentials Safe
 
 >You should not store secrets in code that may be shared or saved to source control.
 

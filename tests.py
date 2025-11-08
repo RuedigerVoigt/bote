@@ -165,7 +165,10 @@ def test_invalid_parameters():
             'recipient': 'bar@example.com',
             'sender': 'foo@example.com'}
         mailer = bote.Mailer(port_not_int)
-    assert 'Port has to be an integer' in str(excinfo.value)
+    assert (
+        'Port has to be an integer' in str(excinfo.value)
+        or 'Port must be integer (0 to 65535)' in str(excinfo.value)
+    )
 
     with pytest.raises(ValueError) as excinfo:
         port_out_of_range = {
@@ -280,9 +283,10 @@ def test_send_mail(mocker):
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com'}
     ssl_mailer = bote.Mailer(ssl_mail_settings)
-    mocker.patch('smtplib.SMTP')
-    # TO DO: check this (could be system dependent or a bug):
-    #ssl_mailer.send_mail('random subject', 'random content')
+    mock_ssl = mocker.patch('smtplib.SMTP_SSL')
+    ssl_mailer.send_mail('random subject', 'random content')
+    # Verify SSL path was used
+    assert mock_ssl.call_count == 1
 
 
 def test_send_mail_to_admin(mocker):

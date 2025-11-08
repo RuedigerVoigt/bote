@@ -34,7 +34,7 @@
 
 * Small code improvements.
 * Updated dependencies.
-* Impoved code testing:
+* Improved code testing:
   * Tests now also run with Python `3.10.0-beta.3` on Ubuntu.
   * Although the code should be platform independent, tests are now also run with MacOS and Windows VMs to be sure.
   * Improved test coverage from 85 to 97%.

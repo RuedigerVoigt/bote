@@ -2,7 +2,7 @@
 Bote: Custom Exceptions
 
 Source: https://github.com/RuedigerVoigt/bote
-(c) 2020-2021 Rüdiger Voigt:
+(c) 2020-2025 Rüdiger Voigt and contributors
 Released under the Apache License 2.0
 """
 

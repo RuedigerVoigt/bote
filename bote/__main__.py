@@ -1,11 +1,17 @@
-""" Send email """
+"""
+Bote
+
+Source: https://github.com/RuedigerVoigt/bote
+(c) 2020-2025 Rüdiger Voigt and contributors
+Released under the Apache License 2.0
+"""
 
 from email.message import EmailMessage
 import logging
 import smtplib
 import ssl
 import textwrap
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 # sister-projects:
 import compatibility
@@ -22,7 +28,7 @@ class Mailer:
     # pylint: disable=too-many-instance-attributes
 
     def __init__(self,
-                 mail_settings: Dict[str, Any]):
+                 mail_settings: dict[str, Any]):
         """Check the mail settings for plausibility and set
            missing values to their default. """
 
@@ -87,7 +93,7 @@ class Mailer:
             logging.debug('Parameter passphrase is empty.')
 
         self.default_recipient: str = ''
-        self.recipient: Union[str, dict] = mail_settings['recipient']
+        self.recipient: str | dict = mail_settings['recipient']
 
         if isinstance(self.recipient, dict):
             if len(self.recipient) == 0:
@@ -149,7 +155,7 @@ class Mailer:
     def send_mail(self,
                   message_subject: str,
                   message_text: str,
-                  overwrite_recipient: Optional[str] = None) -> None:
+                  overwrite_recipient: str | None = None) -> None:
         """Send an email.
            Sender and receiver were fixed with the constructor.
            With overwrite_receiver you change the recipient for this mail."""

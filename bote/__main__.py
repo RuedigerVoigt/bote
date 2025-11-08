@@ -23,7 +23,6 @@ from bote import _version as version
 
 class Mailer:
     "Class of bote to send email"
-    # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-instance-attributes
 

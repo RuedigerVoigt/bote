@@ -10,10 +10,11 @@ from datetime import date
 from email.message import EmailMessage
 import logging
 from pathlib import Path
+import re
 import smtplib
 import ssl
 import textwrap
-import tomllib
+from importlib.metadata import PackageNotFoundError, version
 from typing import Any
 
 # sister-projects:
@@ -25,11 +26,17 @@ from bote import err
 # Use package-level logger for library best practices
 logger = logging.getLogger(__name__)
 
-# Read version from pyproject.toml (single source of truth)
-_pyproject_path = Path(__file__).parent.parent / "pyproject.toml"
-with open(_pyproject_path, "rb") as f:
-    _pyproject_data = tomllib.load(f)
-    __version__ = _pyproject_data["tool"]["poetry"]["version"]
+# Resolve version from installed package metadata; fall back to local pyproject
+try:
+    __version__ = version("bote")
+except PackageNotFoundError:
+    # Source checkout fallback without requiring tomllib (works on Python 3.10)
+    try:
+        _pyproject_text = (Path(__file__).parent.parent / "pyproject.toml").read_text(encoding="utf-8")
+        _m = re.search(r"(?m)^[\t ]*version\s*=\s*\"([^\"]+)\"", _pyproject_text)
+        __version__ = _m.group(1) if _m else "0+unknown"
+    except Exception:  # noqa: BLE001 - best-effort fallback
+        __version__ = "0+unknown"
 
 # Release date for compatibility check
 _release_date = date(2025, 11, 8)

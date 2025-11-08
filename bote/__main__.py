@@ -20,7 +20,6 @@ class Mailer:
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-instance-attributes
-    # pylint: disable=unidiomatic-typecheck
 
     def __init__(self,
                  mail_settings: Dict[str, Any]):
@@ -90,7 +89,7 @@ class Mailer:
         self.default_recipient: str = ''
         self.recipient: Union[str, dict] = mail_settings['recipient']
 
-        if type(self.recipient) == dict:
+        if isinstance(self.recipient, dict):
             if len(self.recipient) == 0:
                 raise ValueError('Dictionary recipient is empty.')
 
@@ -102,7 +101,7 @@ class Mailer:
 
             # TO DO: check for all recipient keys if mailadresses are valid
 
-        elif type(self.recipient) == str:
+        elif isinstance(self.recipient, str):
             if not userprovided.mail.is_email(str(self.recipient)):
                 raise err.NotAnEmail('recipient is not a valid email!')
             self.default_recipient = self.recipient
@@ -209,7 +208,7 @@ class Mailer:
                            message_text: str) -> None:
         """If a dictionary is used for recipient and if it contains an
            admin key: send an email to the corresponding address."""
-        if type(self.recipient) != dict or 'admin' not in self.recipient:
+        if not isinstance(self.recipient, dict) or 'admin' not in self.recipient:
             raise ValueError('Mail address for admin not set with init!')
         self.send_mail(
             message_subject,

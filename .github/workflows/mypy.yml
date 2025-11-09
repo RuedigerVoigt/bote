@@ -22,11 +22,11 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install Dependencies and Mypy
+    - name: Install Poetry and dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -e .
-        pip install mypy
+        python -m pip install poetry
+        poetry install --with dev
 
-    - name: Check code with Mypy
-      run: mypy bote/
+    - name: Check code with Mypy (Poetry)
+      run: poetry run mypy bote/

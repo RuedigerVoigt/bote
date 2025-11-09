@@ -235,7 +235,7 @@ class Mailer:
         except (smtplib.SMTPException, Exception):
             # Catch both SMTP-specific exceptions and general exceptions
             # (e.g., network errors, SSL errors) to ensure all failures are logged
-            logger.exception('Problem sending mail!', exc_info=True)
+            logger.exception('Problem sending mail!')
             raise
 
     def send_mail_to_admin(self,

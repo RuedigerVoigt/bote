@@ -125,7 +125,10 @@ class Mailer:
             except KeyError:
                 logger.warning("No default key in recipient dictionary!")
 
-            # TO DO: check for all recipient keys if mailadresses are valid
+            # Validate all recipient values are valid email addresses
+            for _key, _value in self.recipient.items():
+                if not isinstance(_value, str) or not userprovided.mail.is_email(_value):
+                    raise err.NotAnEmail('recipient is not a valid email!')
 
         elif isinstance(self.recipient, str):
             if not userprovided.mail.is_email(str(self.recipient)):

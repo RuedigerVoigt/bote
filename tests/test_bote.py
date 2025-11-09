@@ -102,6 +102,38 @@ def test_logging_missing_default_key(caplog):
     assert "No default key" in caplog.text
 
 
+def test_recipient_dict_invalid_value_email_format():
+    # Invalid email address in recipient dictionary should raise NotAnEmail
+    with pytest.raises(bote.err.NotAnEmail) as excinfo:
+        settings = {
+            'server': 'smtp.example.com',
+            'server_port': 587,
+            'encryption': 'starttls',
+            'username': 'exampleuser',
+            'passphrase': 'example',
+            'recipient': {'default': 'foo@example.com', 'admin': 'not_an_email'},
+            'sender': 'bar@example.com',
+        }
+        _ = bote.Mailer(settings)
+    assert 'recipient is not a valid email!' in str(excinfo.value)
+
+
+def test_recipient_dict_invalid_value_type():
+    # Non-string value in recipient dictionary should raise NotAnEmail
+    with pytest.raises(bote.err.NotAnEmail) as excinfo:
+        settings = {
+            'server': 'smtp.example.com',
+            'server_port': 587,
+            'encryption': 'starttls',
+            'username': 'exampleuser',
+            'passphrase': 'example',
+            'recipient': {'default': 'foo@example.com', 'admin': 123},
+            'sender': 'bar@example.com',
+        }
+        _ = bote.Mailer(settings)
+    assert 'recipient is not a valid email!' in str(excinfo.value)
+
+
 def test_invalid_parameters():
     with pytest.raises(bote.err.NotAnEmail) as excinfo:
         sender_is_not_email = {

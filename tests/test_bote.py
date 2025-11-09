@@ -1,22 +1,10 @@
 #!/usr/bin/env python3
 
 """
-Pytest test suite for bote (relocated to tests/ for scalability).
-Content preserved from original root-level tests.py.
-"""
-
-#!/usr/bin/env python3
-
-"""
 Automatic Tests for bote
-
-To run these tests:
-coverage run --source bote -m pytest tests.py
-To generate a report afterwards.
-coverage html
 ~~~~~~~~~~~~~~~~~~~~~
 Source: https://github.com/RuedigerVoigt/bote
-(c) 2020-2021 Rüdiger Voigt
+(c) 2020-2025 Rüdiger Voigt and contributors
 Released under the Apache License 2.0
 """
 import logging
@@ -296,6 +284,44 @@ def test_send_mail(mocker):
     assert mock_ssl.call_count == 1
 
 
+def test_unencrypted_uses_custom_port(mocker):
+    # Ensure that when encryption is off and a port is set, SMTP is called with that port
+    mail_settings = {
+        'server': 'localhost',
+        'server_port': 2525,
+        'encryption': 'off',
+        'username': None,
+        'passphrase': None,
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com',
+    }
+    mailer = bote.Mailer(mail_settings)
+    mock_smtp = mocker.patch('smtplib.SMTP')
+    mailer.send_mail('subject', 'body')
+    # Called once with server and custom port
+    assert mock_smtp.call_count == 1
+    args, kwargs = mock_smtp.call_args
+    assert args[:2] == ('localhost', 2525)
+
+
+def test_unencrypted_without_port_uses_default_call(mocker):
+    # Without a server_port, SMTP should be called with only the server argument
+    mail_settings = {
+        'server': 'localhost',
+        'encryption': 'off',
+        'username': None,
+        'passphrase': None,
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com',
+    }
+    mailer = bote.Mailer(mail_settings)
+    mock_smtp = mocker.patch('smtplib.SMTP')
+    mailer.send_mail('subject', 'body')
+    assert mock_smtp.call_count == 1
+    args, kwargs = mock_smtp.call_args
+    assert args == ('localhost',)
+
+
 def test_send_mail_to_admin(mocker):
     # False, but 'valid' settings
     mail_settings = {
@@ -466,4 +492,3 @@ def test_send_mail_GENERIC(caplog):
         with pytest.raises(Exception):
             mailer.send_mail('random subject', 'random content')
         assert "Problem sending mail" in caplog.text
-

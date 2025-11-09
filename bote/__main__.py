@@ -153,8 +153,12 @@ class Mailer:
 
     def __send_unencrypted(self,
                            msg: EmailMessage) -> None:
-        with smtplib.SMTP(self.server) as s:
-            s.send_message(msg)
+        if self.server_port is not None:
+            with smtplib.SMTP(self.server, self.server_port) as s:
+                s.send_message(msg)
+        else:
+            with smtplib.SMTP(self.server) as s:
+                s.send_message(msg)
 
     def __send_ssl(self,
                    msg: EmailMessage) -> None:

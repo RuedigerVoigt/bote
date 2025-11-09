@@ -21,4 +21,4 @@ jobs:
         pip install pytest pytest-mock pyfakefs pytest-cov
 
     - name: Run tests with coverage check (minimum 95%)
-      run: pytest --cov=bote --cov-fail-under=95 tests.py
+      run: pytest --cov=bote --cov-fail-under=95

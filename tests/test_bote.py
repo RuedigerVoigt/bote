@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 
 """
+Pytest test suite for bote (relocated to tests/ for scalability).
+Content preserved from original root-level tests.py.
+"""
+
+#!/usr/bin/env python3
+
+"""
 Automatic Tests for bote
 
 To run these tests:
@@ -459,3 +466,4 @@ def test_send_mail_GENERIC(caplog):
         with pytest.raises(Exception):
             mailer.send_mail('random subject', 'random content')
         assert "Problem sending mail" in caplog.text
+

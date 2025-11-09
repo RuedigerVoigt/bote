@@ -107,6 +107,11 @@ class Mailer:
         # Even for a remote connection username and passphrase might be
         # not necessary - for example if the identification is host based.
         # Therefore no exception is thrown.
+
+        # Validate that username and passphrase are provided together
+        if (self.username and not self.passphrase) or (self.passphrase and not self.username):
+            raise ValueError('Both username and passphrase must be provided together, or both must be omitted.')
+
         if not self.username:
             logger.debug('Parameter username is empty.')
         if not self.passphrase:
@@ -168,7 +173,8 @@ class Mailer:
         with smtplib.SMTP_SSL(host=self.server,
                               port=self.server_port,
                               context=self.context) as s:
-            s.login(self.username, self.passphrase)
+            if self.username and self.passphrase:
+                s.login(self.username, self.passphrase)
             s.send_message(msg)
 
     def __send_starttls(self,
@@ -176,7 +182,8 @@ class Mailer:
         with smtplib.SMTP(self.server,
                           self.server_port) as s:
             s.starttls(context=self.context)
-            s.login(self.username, self.passphrase)
+            if self.username and self.passphrase:
+                s.login(self.username, self.passphrase)
             s.send_message(msg)
 
     def send_mail(self,

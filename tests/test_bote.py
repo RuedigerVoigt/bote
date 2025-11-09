@@ -45,7 +45,7 @@ def test_missing_required_parameters():
 
 
 def test_missing_username():
-    # username set to None
+    # username set to None but passphrase provided should raise error
     mail_settings = {
         'server': 'smtp.example.com',
         'server_port': 587,
@@ -54,8 +54,11 @@ def test_missing_username():
         'passphrase': 'example',
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com'}
-    mailer = bote.Mailer(mail_settings)
-    # username key missing
+    with pytest.raises(ValueError) as excinfo:
+        bote.Mailer(mail_settings)
+    assert 'Both username and passphrase must be provided together' in str(excinfo.value)
+
+    # username key missing but passphrase provided should raise error
     mail_settings = {
         'server': 'smtp.example.com',
         'server_port': 587,
@@ -63,11 +66,13 @@ def test_missing_username():
         'passphrase': 'example',
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com'}
-    _ = bote.Mailer(mail_settings)
+    with pytest.raises(ValueError) as excinfo:
+        bote.Mailer(mail_settings)
+    assert 'Both username and passphrase must be provided together' in str(excinfo.value)
 
 
 def test_missing_passphrase():
-    # passphrase set to none
+    # passphrase set to None but username provided should raise error
     mail_settings = {
         'server': 'smtp.example.com',
         'server_port': 587,
@@ -76,8 +81,11 @@ def test_missing_passphrase():
         'passphrase': None,
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com'}
-    mailer = bote.Mailer(mail_settings)
-    # passphrase key missing
+    with pytest.raises(ValueError) as excinfo:
+        bote.Mailer(mail_settings)
+    assert 'Both username and passphrase must be provided together' in str(excinfo.value)
+
+    # passphrase key missing but username provided should raise error
     mail_settings = {
         'server': 'smtp.example.com',
         'server_port': 587,
@@ -85,7 +93,9 @@ def test_missing_passphrase():
         'username': 'exampleuser',
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com'}
-    _ = bote.Mailer(mail_settings)
+    with pytest.raises(ValueError) as excinfo:
+        bote.Mailer(mail_settings)
+    assert 'Both username and passphrase must be provided together' in str(excinfo.value)
 
 
 def test_logging_missing_default_key(caplog):
@@ -414,7 +424,7 @@ def test_recognize_localhost():
         'server_port': 587,
         'encryption': 'starttls',
         'username': None,
-        'passphrase': 'example',
+        'passphrase': None,
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com'}
     mailer = bote.Mailer(localhost_as_string)

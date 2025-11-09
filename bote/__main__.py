@@ -39,7 +39,7 @@ except PackageNotFoundError:
         __version__ = "0+unknown"
 
 # Release date for compatibility check
-_release_date = date(2025, 11, 8)
+_release_date = date(2025, 11, 9)
 
 
 class Mailer:

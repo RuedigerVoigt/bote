@@ -5,14 +5,14 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "bote"
 version = "2.0.0"
-description = "Send email messages and enforce encryption."
+description = "Python SMTP client with enforced encryption for sending plain-text emails securely"
 authors = ["Rüdiger Voigt <projects@ruediger-voigt.eu>"]
 license = "Apache-2.0"
 readme = "README.md"
 homepage = "https://github.com/RuedigerVoigt/bote"
 repository = "https://github.com/RuedigerVoigt/bote"
 documentation = "https://github.com/RuedigerVoigt/bote"
-keywords = ["email", "smtp", "encryption", "security"]
+keywords = ["email", "smtp", "smtp-client", "email-sender", "starttls", "ssl", "tls", "encryption", "security", "python-email", "secure-smtp", "notification", "alerts", "mailer", "automated-email"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
@@ -42,7 +42,7 @@ include = ["bote/py.typed"]
 [tool.poetry.dependencies]
 python = "^3.10"
 compatibility = ">=2.0.0"
-userprovided = ">=2.1.1"
+userprovided = ">=2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"

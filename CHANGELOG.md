@@ -1,21 +1,21 @@
 # Changelog / History
 
-## Version 2.0.0 (Upcoming)
+## Version 2.0.0 (upcoming)
 
 * Migrated from setup.py to pyproject.toml with Poetry as build backend.
 * Python Support:
- * Drop support for Python 3.8 and 3.9 (EOL or near EOL).
- * Add tests and support for Python 3.10, 3.11, 3.12, 3.13, and 3.14.
+  * Drop support for Python 3.8 and 3.9 (EOL or near EOL).
+  * Tests and support for Python 3.10, 3.11, 3.12, 3.13, and 3.14.
 * Code modernization:
- * Switch to package-level logger instead of root logger (library best practice).
- * Updated dependencies: compatibility>=2.0.0 and userprovided>=2.1.1.
+  * Switch to package-level logger instead of root logger (library best practice).
+  * Updated dependencies: compatibility>=2.0.0 and userprovided>=2.1.1.
 * Behavior changes:
- * Credential validation: Username and passphrase must now be provided together or both omitted. Providing only one raises `ValueError` at initialization. This catches configuration errors early.
- * Conditional authentication: SMTP login is now skipped when both username and passphrase are omitted, enabling authentication methods that don't require credentials (e.g., IP-based auth).
+  * Credential validation: Username and passphrase must now be provided together or both omitted. Providing only one raises `ValueError` at initialization. This catches configuration errors early.
+  * Conditional authentication: SMTP login is now skipped when both username and passphrase are omitted, enabling authentication methods that don't require credentials (e.g., IP-based auth).
 * Quality:
- * Workflow ensures test coverage is at least 95%.
- * Added separate flake8 linting workflow.
- * All GitHub Actions workflows updated to latest versions.
+  * Workflow ensures test coverage is at least 95%.
+  * Added separate flake8 linting workflow.
+  * All GitHub Actions workflows updated to latest versions.
 
 ## Version 1.2.2 stable (2021-10-10)
 

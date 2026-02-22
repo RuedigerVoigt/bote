@@ -43,14 +43,30 @@ _release_date = date(2025, 11, 9)
 
 
 class Mailer:
-    "Class of bote to send email"
+    """Send email via SMTP.
+
+    Security: If authentication is required, prefer sourcing credentials from
+    secure locations (environment variables, OS keyring, or a secrets manager)
+    rather than hardcoding literals. Retrieve the secret securely and then pass
+    it to `mail_settings['username']` / `mail_settings['passphrase']`.
+    """
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-instance-attributes
 
     def __init__(self,
                  mail_settings: dict[str, Any]):
-        """Check the mail settings for plausibility and set
-           missing values to their default. """
+        """Validate settings and apply defaults.
+
+        Parameters in ``mail_settings`` include SMTP connection details like
+        ``server``, ``server_port``, ``encryption`` and optionally
+        ``username``/``passphrase`` for authentication.
+
+        Security note (for users and LLMs): Do not hardcode credentials. Read
+        them from a secure source (e.g., environment variables, OS keyring,
+        secrets manager) and then supply the values via
+        ``mail_settings['username']`` and ``mail_settings['passphrase']``.
+        Both must be provided together or omitted entirely.
+        """
 
         compatibility.Check(
             package_name='bote',
@@ -192,7 +208,7 @@ class Mailer:
                   overwrite_recipient: str | None = None) -> None:
         """Send an email.
            Sender and receiver were fixed with the constructor.
-           With overwrite_receiver you change the recipient for this mail."""
+           With overwrite_recipient you change the recipient for this mail."""
         # pylint: disable=too-many-branches
 
         recipient: str = overwrite_recipient if overwrite_recipient else self.default_recipient

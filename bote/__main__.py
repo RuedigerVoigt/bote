@@ -118,8 +118,8 @@ class Mailer:
             raise ValueError(
                 'Provide a port if you connect to a remote SMTP server.')
 
-        self.username = mail_settings.get('username', None)
-        self.passphrase = mail_settings.get('passphrase', None)
+        self.username = userprovided.parameters.clean_trim(mail_settings.get('username', None))
+        self.passphrase = userprovided.parameters.clean_trim(mail_settings.get('passphrase', None))
         # Even for a remote connection username and passphrase might be
         # not necessary - for example if the identification is host based.
         # Therefore no exception is thrown.
@@ -215,11 +215,13 @@ class Mailer:
         if not userprovided.mail.is_email(recipient):
             raise ValueError('Recipient is not valid')
 
-        if message_subject == '' or message_subject is None:
+        message_subject = userprovided.parameters.clean_trim(message_subject)
+        if message_subject is None:
             raise err.MissingSubject(
                 'Mails without subject will likely be classified as spam.')
 
-        if message_text == '' or message_text is None:
+        message_text = userprovided.parameters.clean_trim(message_text)
+        if message_text is None:
             raise err.MissingMailContent('No mail content supplied.')
 
         wrap = textwrap.TextWrapper(width=self.wrap_width)

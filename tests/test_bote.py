@@ -44,6 +44,28 @@ def test_missing_required_parameters():
     assert 'Necessary key' in str(excinfo.value)
 
 
+def test_whitespace_only_credentials():
+    # Whitespace-only username with real passphrase should raise error
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': '   ',
+        'passphrase': 'example',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
+    with pytest.raises(ValueError) as excinfo:
+        bote.Mailer(mail_settings)
+    assert 'Both username and passphrase must be provided together' in str(excinfo.value)
+
+    # Whitespace-only passphrase with real username should raise error
+    mail_settings['username'] = 'exampleuser'
+    mail_settings['passphrase'] = '   '
+    with pytest.raises(ValueError) as excinfo:
+        bote.Mailer(mail_settings)
+    assert 'Both username and passphrase must be provided together' in str(excinfo.value)
+
+
 def test_missing_username():
     # username set to None but passphrase provided should raise error
     mail_settings = {
@@ -294,11 +316,23 @@ def test_send_mail(mocker):
         mailer.send_mail('random subject', None)
     assert 'No mail content supplied.' in str(excinfo.value)
 
+    # Whitespace-only subject
+    with pytest.raises(bote.err.MissingSubject) as excinfo:
+        mailer.send_mail('   ', 'random text')
+    assert 'classified as spam' in str(excinfo.value)
+
+    # Whitespace-only body
+    with pytest.raises(bote.err.MissingMailContent) as excinfo:
+        mailer.send_mail('random subject', '   ')
+    assert 'No mail content supplied.' in str(excinfo.value)
+
     # ############### PATCH smtplib ##################
     # as we do not want to actually send an email
     mocker.patch('smtplib.SMTP')
     # send_mail: standard
     mailer.send_mail('random subject', 'random content')
+    # Subject/body with surrounding whitespace should be trimmed and sent
+    mailer.send_mail('  trimmed subject  ', '  trimmed body  ')
     # send_mail: overwrite recipient
     mailer.send_mail('random subject', 'random content', 'foo@example.com')
     # overwrite recipient with invalid value

@@ -101,6 +101,7 @@ Parameter | Default | Description
 `username`| `None` | SMTP authentication username
 `passphrase`| `None` | SMTP authentication password
 `wrap_width`| `80` | Line wrap width for email body
+`timeout`| `60` | Socket timeout in seconds for SMTP operations
 
 **Important:** `username` and `passphrase` must be provided together or both omitted.
 
@@ -229,6 +230,7 @@ Creates a mailer instance with validated settings.
 - `username` (str): SMTP authentication username (default: `None`)
 - `passphrase` (str): SMTP authentication password (default: `None`)
 - `wrap_width` (int): Line wrap width for email body (default: `80`)
+- `timeout` (float): Socket timeout in seconds for all SMTP operations (default: `60`)
 
 **Note:** `username` and `passphrase` must be provided together or both omitted.
 

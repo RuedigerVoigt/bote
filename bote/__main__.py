@@ -90,7 +90,7 @@ class Mailer:
             allowed_keys={'server', 'server_port', 'encryption',
                           'username', 'passphrase',
                           'recipient', 'sender',
-                          'wrap_width'},
+                          'wrap_width', 'timeout'},
             necessary_keys={'recipient', 'sender'},
             dict_name='mail_settings')
 
@@ -167,6 +167,14 @@ class Mailer:
         if not isinstance(self.wrap_width, int):
             raise ValueError('wrap_width is not an integer!')
 
+        # Socket timeout (seconds) applied to every SMTP operation. A finite
+        # default stops a hung or unreachable server from blocking forever.
+        self.timeout: float = mail_settings.get('timeout', 60.0)
+        if isinstance(self.timeout, bool) or not isinstance(self.timeout, (int, float)):
+            raise ValueError('timeout must be a number of seconds.')
+        if self.timeout <= 0:
+            raise ValueError('timeout must be a positive number of seconds.')
+
         # Create SSL context. According to the docs this will:
         # * load the system’s trusted CA certificates,
         # * enable certificate validation and hostname checking,
@@ -178,10 +186,11 @@ class Mailer:
     def __send_unencrypted(self,
                            msg: EmailMessage) -> None:
         if self.server_port is not None:
-            with smtplib.SMTP(self.server, self.server_port) as s:
+            with smtplib.SMTP(self.server, self.server_port,
+                              timeout=self.timeout) as s:
                 s.send_message(msg)
         else:
-            with smtplib.SMTP(self.server) as s:
+            with smtplib.SMTP(self.server, timeout=self.timeout) as s:
                 s.send_message(msg)
 
     def __send_ssl(self,
@@ -189,7 +198,8 @@ class Mailer:
         # A port of 0 lets smtplib pick the protocol default (465 for SSL).
         with smtplib.SMTP_SSL(host=self.server,
                               port=self.server_port or 0,
-                              context=self.context) as s:
+                              context=self.context,
+                              timeout=self.timeout) as s:
             if self.username and self.passphrase:
                 s.login(self.username, self.passphrase)
             s.send_message(msg)
@@ -198,7 +208,8 @@ class Mailer:
                         msg: EmailMessage) -> None:
         # A port of 0 lets smtplib pick the protocol default (25 for SMTP).
         with smtplib.SMTP(self.server,
-                          self.server_port or 0) as s:
+                          self.server_port or 0,
+                          timeout=self.timeout) as s:
             s.starttls(context=self.context)
             if self.username and self.passphrase:
                 s.login(self.username, self.passphrase)

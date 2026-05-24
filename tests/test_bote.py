@@ -568,3 +568,71 @@ def test_send_mail_GENERIC(caplog):
         with pytest.raises(Exception):
             mailer.send_mail('random subject', 'random content')
         assert "Problem sending mail" in caplog.text
+
+
+# #############################################################################
+# TEST TIMEOUT
+# #############################################################################
+
+
+def test_invalid_timeout_type():
+    # A non-numeric timeout should raise ValueError at initialization
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'exampleuser',
+        'passphrase': 'example',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com',
+        'timeout': 'soon'}
+    with pytest.raises(ValueError) as excinfo:
+        bote.Mailer(mail_settings)
+    assert 'timeout must be a number' in str(excinfo.value)
+
+
+def test_invalid_timeout_value():
+    # A non-positive timeout should raise ValueError at initialization
+    mail_settings = {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'exampleuser',
+        'passphrase': 'example',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com',
+        'timeout': 0}
+    with pytest.raises(ValueError) as excinfo:
+        bote.Mailer(mail_settings)
+    assert 'positive' in str(excinfo.value)
+
+
+def test_timeout_passed_to_smtp(mocker):
+    # A custom timeout must be forwarded to smtplib
+    mail_settings = {
+        'server': 'localhost',
+        'server_port': 2525,
+        'encryption': 'off',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com',
+        'timeout': 12.5}
+    mailer = bote.Mailer(mail_settings)
+    mock_smtp = mocker.patch('smtplib.SMTP')
+    mailer.send_mail('subject', 'body')
+    _, kwargs = mock_smtp.call_args
+    assert kwargs.get('timeout') == 12.5
+
+
+def test_default_timeout_applied(mocker):
+    # Without an explicit timeout, the finite default is forwarded
+    mail_settings = {
+        'server': 'localhost',
+        'encryption': 'off',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
+    mailer = bote.Mailer(mail_settings)
+    assert mailer.timeout == 60.0
+    mock_smtp = mocker.patch('smtplib.SMTP')
+    mailer.send_mail('subject', 'body')
+    _, kwargs = mock_smtp.call_args
+    assert kwargs.get('timeout') == 60.0

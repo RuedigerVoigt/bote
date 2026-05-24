@@ -8,14 +8,19 @@
   * Tests and support for Python 3.10, 3.11, 3.12, 3.13, and 3.14.
 * Code modernization:
   * Switch to package-level logger instead of root logger (library best practice).
-  * Updated dependencies: compatibility>=2.0.0 and userprovided>=2.1.1.
+  * Updated dependencies: compatibility>=2.0.0 and userprovided>=2.3.0.
+  * Fixed type annotations.
+  * Bumped development tooling to current major versions.
 * Behavior changes:
   * Credential validation: Username and passphrase must now be provided together or both omitted. Providing only one raises `ValueError` at initialization. This catches configuration errors early.
   * Conditional authentication: SMTP login is now skipped when both username and passphrase are omitted, enabling authentication methods that don't require credentials (e.g., IP-based auth).
+  * Connection timeout: All SMTP operations now honor a configurable `timeout` setting (`mail_settings['timeout']`, default 60 seconds, validated as a positive number). Previously a connection could block indefinitely on an unresponsive server.
 * Quality:
   * Workflow ensures test coverage is at least 95%.
   * Added separate flake8 linting workflow.
   * All GitHub Actions workflows updated to latest versions.
+  * Added a Dependabot configuration tracking Python dependencies and GitHub Actions versions.
+  * Added a scheduled pip-audit workflow that scans dependencies for known vulnerabilities daily.
 
 ## Version 1.2.2 stable (2021-10-10)
 

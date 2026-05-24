@@ -1,0 +1,31 @@
+# Audit dependencies for known vulnerabilities (CVEs) using pip-audit.
+# Scheduled workflows run against the default branch (master) only.
+
+name: pip-audit (dependency CVE scan)
+
+on:
+  schedule:
+    # 04:45 UTC. GitHub cron is UTC and does NOT observe DST, so this fires at
+    # 05:45 Germany time in winter (CET) and 06:45 in summer (CEST).
+    - cron: '45 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.14'
+
+    - name: Audit dependencies with pip-audit
+      uses: pypa/gh-action-pip-audit@v1.1.0
+      with:
+        # Build and audit this project's dependency closure.
+        inputs: .

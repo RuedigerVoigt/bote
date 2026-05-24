@@ -42,14 +42,14 @@ include = ["bote/py.typed"]
 [tool.poetry.dependencies]
 python = "^3.10"
 compatibility = ">=2.0.0"
-userprovided = ">=2.2.0"
+userprovided = ">=2.3.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.0.0"
-pytest-mock = "^3.0.0"
-pytest-cov = "^7.0.0"
-pyfakefs = "^5.0.0"
-mypy = "^1.0.0"
-flake8 = "^7.0.0"
-pylint = "^4.0.0"
-coverage = "^7.0.0"
+pytest = "^9.0.3"
+pytest-mock = "^3.15.1"
+pytest-cov = "^7.1.0"
+pyfakefs = "^6.2.0"
+mypy = "^2.1.0"
+flake8 = "^7.3.0"
+pylint = "^4.0.5"
+coverage = "^7.14.0"

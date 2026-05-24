@@ -110,7 +110,7 @@ class Mailer:
             raise err.UnencryptedRemoteConnection(
                 'Connection is not local, but unencrypted!')
 
-        self.server_port = mail_settings.get('server_port', None)
+        self.server_port: int | None = mail_settings.get('server_port', None)
         if self.server_port:
             if not userprovided.parameters.is_port(self.server_port):
                 raise ValueError('Port must be integer (0 to 65535)')
@@ -186,8 +186,9 @@ class Mailer:
 
     def __send_ssl(self,
                    msg: EmailMessage) -> None:
+        # A port of 0 lets smtplib pick the protocol default (465 for SSL).
         with smtplib.SMTP_SSL(host=self.server,
-                              port=self.server_port,
+                              port=self.server_port or 0,
                               context=self.context) as s:
             if self.username and self.passphrase:
                 s.login(self.username, self.passphrase)
@@ -195,8 +196,9 @@ class Mailer:
 
     def __send_starttls(self,
                         msg: EmailMessage) -> None:
+        # A port of 0 lets smtplib pick the protocol default (25 for SMTP).
         with smtplib.SMTP(self.server,
-                          self.server_port) as s:
+                          self.server_port or 0) as s:
             s.starttls(context=self.context)
             if self.username and self.passphrase:
                 s.login(self.username, self.passphrase)
@@ -215,26 +217,26 @@ class Mailer:
         if not userprovided.mail.is_email(recipient):
             raise ValueError('Recipient is not valid')
 
-        message_subject = userprovided.parameters.clean_trim(message_subject)
-        if message_subject is None:
+        trimmed_subject = userprovided.parameters.clean_trim(message_subject)
+        if trimmed_subject is None:
             raise err.MissingSubject(
                 'Mails without subject will likely be classified as spam.')
 
-        message_text = userprovided.parameters.clean_trim(message_text)
-        if message_text is None:
+        trimmed_text = userprovided.parameters.clean_trim(message_text)
+        if trimmed_text is None:
             raise err.MissingMailContent('No mail content supplied.')
 
         wrap = textwrap.TextWrapper(width=self.wrap_width)
 
         # To preserve intentional linebreaks, the text is wrapped linewise.
         wrapped_text = ''
-        for line in str.splitlines(message_text):
+        for line in str.splitlines(trimmed_text):
             wrapped_text += wrap.fill(line) + "\n"
 
         try:
             msg = EmailMessage()
             msg.set_content(wrapped_text)
-            msg['Subject'] = message_subject
+            msg['Subject'] = trimmed_subject
             msg['From'] = self.sender
             msg['To'] = recipient
 

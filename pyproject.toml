@@ -1,17 +1,15 @@
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry]
+[project]
 name = "bote"
 version = "2.0.0"
 description = "Python SMTP client with enforced encryption for sending plain-text emails securely"
-authors = ["Rüdiger Voigt <projects@ruediger-voigt.eu>"]
+authors = [{name = "Rüdiger Voigt", email = "projects@ruediger-voigt.eu"}]
 license = "Apache-2.0"
 readme = "README.md"
-homepage = "https://github.com/RuedigerVoigt/bote"
-repository = "https://github.com/RuedigerVoigt/bote"
-documentation = "https://github.com/RuedigerVoigt/bote"
+requires-python = ">=3.10,<4.0"
 keywords = ["email", "smtp", "smtp-client", "email-sender", "starttls", "ssl", "tls", "encryption", "security", "python-email", "secure-smtp", "notification", "alerts", "mailer", "automated-email"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -20,7 +18,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
@@ -31,18 +28,22 @@ classifiers = [
     "Topic :: Communications :: Email",
     "Topic :: Security :: Cryptography",
 ]
-packages = [{include = "bote"}]
-include = ["bote/py.typed"]
+dependencies = [
+    "compatibility>=2.0.0",
+    "userprovided>=2.3.0",
+]
 
-[tool.poetry.urls]
+[project.urls]
+Homepage = "https://github.com/RuedigerVoigt/bote"
+Repository = "https://github.com/RuedigerVoigt/bote"
+Documentation = "https://github.com/RuedigerVoigt/bote"
 "Bug Tracker" = "https://github.com/RuedigerVoigt/bote/issues"
-"Changelog" = "https://github.com/RuedigerVoigt/bote/blob/master/CHANGELOG.md"
+Changelog = "https://github.com/RuedigerVoigt/bote/blob/master/CHANGELOG.md"
 "Source Code" = "https://github.com/RuedigerVoigt/bote"
 
-[tool.poetry.dependencies]
-python = "^3.10"
-compatibility = ">=2.0.0"
-userprovided = ">=2.3.0"
+[tool.poetry]
+packages = [{include = "bote"}]
+include = ["bote/py.typed"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.3"

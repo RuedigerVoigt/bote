@@ -1,0 +1,30 @@
+# This workflow scans the package for common security issues using Bandit.
+# Tests are excluded from the scan.
+
+name: Bandit (security scan)
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.14'
+
+    - name: Install Bandit (latest)
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install --upgrade bandit
+
+    - name: Scan with Bandit (excluding tests)
+      run: bandit -r . -x ./tests

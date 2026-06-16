@@ -50,6 +50,15 @@ pytest-mock = "^3.15.1"
 pytest-cov = "^7.1.0"
 pyfakefs = "^6.2.0"
 mypy = "^2.1.0"
-flake8 = "^7.3.0"
+ruff = "^0.15.17"
 pylint = "^4.0.5"
 coverage = "^7.14.0"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint.per-file-ignores]
+# Re-exports for the public API are intentional, not unused imports.
+"bote/__init__.py" = ["F401"]
+# pytest.raises blocks bind locals that are deliberately never read.
+"tests/*" = ["F841"]

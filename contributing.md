@@ -39,7 +39,7 @@ Guidelines:
 
  # Type checking and linting
  poetry run mypy bote
- poetry run flake8 .
+ poetry run ruff check .
  ```
  * Please adhere to [PEP8](https://www.python.org/dev/peps/pep-0008/).
  * The code should include some documentation.

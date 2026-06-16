@@ -1,5 +1,4 @@
 import importlib
-import types
 
 
 def reload_main_with_patch(monkeypatch, patch_importlib_version=None, patch_path_read_text=None):

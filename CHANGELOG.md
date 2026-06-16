@@ -17,7 +17,7 @@
   * Connection timeout: All SMTP operations now honor a configurable `timeout` setting (`mail_settings['timeout']`, default 60 seconds, validated as a positive number). Previously a connection could block indefinitely on an unresponsive server.
 * Quality:
   * Workflow ensures test coverage is at least 95%.
-  * Added separate flake8 linting workflow.
+  * Added separate Ruff linting workflow.
   * All GitHub Actions workflows updated to latest versions.
   * Added a Dependabot configuration tracking Python dependencies and GitHub Actions versions.
   * Added a scheduled pip-audit workflow that scans dependencies for known vulnerabilities daily.

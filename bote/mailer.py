@@ -32,7 +32,8 @@ try:
 except PackageNotFoundError:
     # Source checkout fallback without requiring tomllib (works on Python 3.10)
     try:
-        _pyproject_text = (Path(__file__).parent.parent / "pyproject.toml").read_text(encoding="utf-8")
+        _pyproject_path = Path(__file__).parent.parent / "pyproject.toml"
+        _pyproject_text = _pyproject_path.read_text(encoding="utf-8")
         _m = re.search(r"(?m)^[\t ]*version\s*=\s*\"([^\"]+)\"", _pyproject_text)
         __version__ = _m.group(1) if _m else "0+unknown"
     except Exception:  # noqa: BLE001 - best-effort fallback
@@ -127,8 +128,10 @@ class Mailer:
         # Therefore no exception is thrown.
 
         # Validate that username and passphrase are provided together
-        if (self.username and not self.passphrase) or (self.passphrase and not self.username):
-            raise ValueError('Both username and passphrase must be provided together, or both must be omitted.')
+        if bool(self.username) != bool(self.passphrase):
+            raise ValueError(
+                'Both username and passphrase must be provided together, '
+                'or both must be omitted.')
 
         if not self.username:
             logger.debug('Parameter username is empty.')

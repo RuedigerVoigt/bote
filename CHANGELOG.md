@@ -21,6 +21,11 @@
   * Added separate Ruff linting workflow.
   * All GitHub Actions workflows updated to latest versions.
   * Added a Dependabot configuration tracking Python dependencies and GitHub Actions versions.
+* Security:
+  * Added a `SECURITY.md` security policy documenting supported versions and how to report a vulnerability.
+  * Enabled GitHub Private Vulnerability Reporting for confidential disclosure.
+  * Enabled immutable releases so published release tags and assets cannot be altered after the fact.
+  * Added a Bandit workflow that scans the package for common security issues on every push and pull request.
   * Added a scheduled pip-audit workflow that scans dependencies for known vulnerabilities daily.
 
 ## Version 1.2.2 stable (2021-10-10)

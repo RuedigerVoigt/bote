@@ -264,6 +264,22 @@ def test_invalid_parameters():
     assert 'wrap_width is not an integer!' in str(excinfo.value)
 
 
+def test_wrap_width_out_of_range_falls_back_to_default():
+    # A wrap_width outside the allowed range falls back to the 80-char default
+    # instead of reaching textwrap and raising at send time.
+    for invalid_width in (0, -5, 5000):
+        mailer = bote.Mailer({
+            'server': 'smtp.example.com',
+            'server_port': 123,
+            'encryption': 'ssl',
+            'username': 'exampleuser',
+            'passphrase': 'example',
+            'recipient': 'foo@example.com',
+            'sender': 'bar@example.com',
+            'wrap_width': invalid_width})
+        assert mailer.wrap_width == 80
+
+
 # #############################################################################
 # TEST PARAMETERS WITH CONTRADICTIONS
 # #############################################################################

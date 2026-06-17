@@ -9,7 +9,7 @@
   * Tests and support for Python 3.10, 3.11, 3.12, 3.13, and 3.14.
 * Code modernization:
   * Switch to package-level logger instead of root logger (library best practice).
-  * Updated dependencies: compatibility>=2.0.0 and userprovided>=2.3.0.
+  * Updated dependencies: compatibility>=2.0.0 and userprovided>=2.5.0.
   * Fixed type annotations.
   * Bumped development tooling to current major versions.
 * Behavior changes:

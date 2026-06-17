@@ -30,7 +30,7 @@ classifiers = [
 ]
 dependencies = [
     "compatibility>=2.0.0",
-    "userprovided>=2.3.0",
+    "userprovided>=2.5.0",
 ]
 
 [project.urls]

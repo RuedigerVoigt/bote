@@ -165,9 +165,14 @@ class Mailer:
         if not userprovided.mail.is_email(self.sender):
             raise err.NotAnEmail('sender is not a valid email!')
 
-        self.wrap_width = mail_settings.get('wrap_width', 80)
-        if not isinstance(self.wrap_width, int):
+        wrap_width = mail_settings.get('wrap_width', 80)
+        if not isinstance(wrap_width, int) or isinstance(wrap_width, bool):
             raise ValueError('wrap_width is not an integer!')
+        # Clamp to a sane range. Out-of-range values fall back to the 80-char
+        # default instead of crashing textwrap at send time. The upper bound is
+        # the RFC 5322 maximum line length.
+        self.wrap_width = userprovided.parameters.int_in_range(
+            'wrap_width', wrap_width, 1, 998, 80)
 
         # Socket timeout (seconds) applied to every SMTP operation. A finite
         # default stops a hung or unreachable server from blocking forever.

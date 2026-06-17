@@ -112,6 +112,8 @@ class Mailer:
 
         self.server_port: int | None = mail_settings.get('server_port', None)
         if self.server_port:
+            if not isinstance(self.server_port, int):
+                raise ValueError('Port has to be an integer')
             if not userprovided.parameters.is_port(self.server_port):
                 raise ValueError('Port must be integer (0 to 65535)')
         elif not self.is_local:

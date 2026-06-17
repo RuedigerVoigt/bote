@@ -13,7 +13,7 @@ def reload_main_with_patch(monkeypatch, patch_importlib_version=None, patch_path
         monkeypatch.setattr(_pl.Path, "read_text", patch_path_read_text, raising=True)
 
     # Reload module under test to trigger top-level version resolution
-    import bote.__main__ as main
+    import bote.mailer as main
     importlib.reload(main)
     return main
 

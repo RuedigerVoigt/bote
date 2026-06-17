@@ -20,5 +20,5 @@ jobs:
         python -m pip install poetry
         poetry install --with dev
 
-    - name: Run tests with coverage check (minimum 95%)
-      run: poetry run pytest --cov=bote --cov-fail-under=95
+    - name: Run tests with coverage check (minimum 100%)
+      run: poetry run pytest --cov=bote --cov-fail-under=100

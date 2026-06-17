@@ -17,7 +17,7 @@
   * Conditional authentication: SMTP login is now skipped when both username and passphrase are omitted, enabling authentication methods that don't require credentials (e.g., IP-based auth).
   * Connection timeout: All SMTP operations now honor a configurable `timeout` setting (`mail_settings['timeout']`, default 60 seconds, validated as a positive number). Previously a connection could block indefinitely on an unresponsive server.
 * Quality:
-  * Workflow ensures test coverage is at least 95%.
+  * Workflow enforces 100% test coverage.
   * Added separate Ruff linting workflow.
   * All GitHub Actions workflows updated to latest versions.
   * Added a Dependabot configuration tracking Python dependencies and GitHub Actions versions.

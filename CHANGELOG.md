@@ -22,6 +22,7 @@
   * Added separate Ruff linting workflow.
   * All GitHub Actions workflows updated to latest versions.
   * Added a Dependabot configuration tracking Python dependencies and GitHub Actions versions.
+  * Added an experimental CI run against the latest Python pre-release (currently 3.15 beta); it is allowed to fail, so upcoming breakage is reported without blocking the build.
 * Security:
   * Added a `SECURITY.md` security policy documenting supported versions and how to report a vulnerability.
   * Enabled GitHub Private Vulnerability Reporting for confidential disclosure.

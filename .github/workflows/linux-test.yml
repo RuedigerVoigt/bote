@@ -9,9 +9,17 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    # The experimental run against the latest Python pre-release is allowed to
+    # fail: a break there is reported but does not fail the workflow.
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
+      fail-fast: false
       matrix:
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        experimental: [false]
+        include:
+          - python-version: '3.15'
+            experimental: true
 
     steps:
     - name: Checkout
@@ -21,6 +29,8 @@ jobs:
       uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
+        # Needed so the latest Python pre-release can be installed.
+        allow-prereleases: true
     - name: Install Poetry and dependencies
       run: |
         python -m pip install --upgrade pip

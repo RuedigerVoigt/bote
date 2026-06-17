@@ -312,6 +312,11 @@ class Mailer:
         with smtplib.SMTP(self.server,
                           self.server_port or 0,
                           timeout=self.timeout) as s:
+            # starttls() raises if the server does not offer STARTTLS or returns
+            # a non-220 reply (e.g. a man-in-the-middle stripping the capability
+            # to force a downgrade), so a failed upgrade surfaces as an exception
+            # rather than silently sending in the clear. The default SSL context
+            # also enforces certificate and hostname validation.
             s.starttls(context=self.context)
             if self.username and self.passphrase:
                 s.login(self.username, self.passphrase)

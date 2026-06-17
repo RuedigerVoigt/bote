@@ -52,7 +52,6 @@ pytest-cov = "^7.1.0"
 pyfakefs = "^6.2.0"
 mypy = "^2.1.0"
 ruff = "^0.15.17"
-pylint = "^4.0.5"
 coverage = "^7.14.0"
 
 [tool.ruff]

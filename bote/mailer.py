@@ -51,7 +51,6 @@ class Mailer:
     rather than hardcoding literals. Retrieve the secret securely and then pass
     it to `mail_settings['username']` / `mail_settings['passphrase']`.
     """
-    # pylint: disable=too-many-instance-attributes
 
     def __init__(self,
                  mail_settings: dict[str, Any]):
@@ -340,8 +339,6 @@ class Mailer:
             err.MissingMailContent: If the body is empty.
             smtplib.SMTPException: If sending fails (re-raised after logging).
         """
-        # pylint: disable=too-many-branches
-
         recipient: str = overwrite_recipient if overwrite_recipient else self.default_recipient
         if not userprovided.mail.is_email(recipient):
             raise ValueError('Recipient is not valid')

@@ -55,17 +55,28 @@ class Mailer:
 
     def __init__(self,
                  mail_settings: dict[str, Any]):
-        """Validate settings and apply defaults.
-
-        Parameters in ``mail_settings`` include SMTP connection details like
-        ``server``, ``server_port``, ``encryption`` and optionally
-        ``username``/``passphrase`` for authentication.
+        """Validate the settings and apply defaults.
 
         Security note (for users and LLMs): Do not hardcode credentials. Read
-        them from a secure source (e.g., environment variables, OS keyring,
+        them from a secure source (e.g. environment variables, OS keyring,
         secrets manager) and then supply the values via
         ``mail_settings['username']`` and ``mail_settings['passphrase']``.
         Both must be provided together or omitted entirely.
+
+        Args:
+            mail_settings: Configuration mapping. Recognized keys are
+                ``server``, ``server_port``, ``encryption``, ``username``,
+                ``passphrase``, ``recipient`` (required), ``sender``
+                (required), ``wrap_width`` and ``timeout``.
+
+        Raises:
+            ValueError: If a key is missing or unknown, or a value is invalid
+                (e.g. unknown encryption, bad port, non-integer ``wrap_width``,
+                non-positive ``timeout``).
+            err.UnencryptedRemoteConnection: If the connection is not local but
+                encryption is ``'off'``.
+            err.NotAnEmail: If the sender or any recipient is not a valid email
+                address.
         """
 
         self.__check_compatibility()
@@ -85,6 +96,7 @@ class Mailer:
 
     @staticmethod
     def __check_compatibility() -> None:
+        """Verify the running Python version and platform are supported."""
         compatibility.Check(
             package_name='bote',
             package_version=__version__,
@@ -104,6 +116,15 @@ class Mailer:
 
     @staticmethod
     def __validate_keys(mail_settings: dict[str, Any]) -> None:
+        """Check that only allowed keys and all required keys are present.
+
+        Args:
+            mail_settings: The configuration mapping to validate.
+
+        Raises:
+            ValueError: If a required key is missing or an unknown key is
+                present.
+        """
         userprovided.parameters.validate_dict_keys(
             dict_to_check=mail_settings,
             allowed_keys={'server', 'server_port', 'encryption',
@@ -114,6 +135,17 @@ class Mailer:
             dict_name='mail_settings')
 
     def __configure_server(self, mail_settings: dict[str, Any]) -> None:
+        """Set the server, encryption mode and port, enforcing encryption.
+
+        Args:
+            mail_settings: The configuration mapping.
+
+        Raises:
+            ValueError: If the encryption mode or port is invalid, or no port
+                is given for a remote server.
+            err.UnencryptedRemoteConnection: If the connection is not local but
+                encryption is ``'off'``.
+        """
         # Not all keys must be there.
         # Provide default values for missing ones:
         self.server: str = mail_settings.get('server', 'localhost')
@@ -140,6 +172,14 @@ class Mailer:
                 'Provide a port if you connect to a remote SMTP server.')
 
     def __configure_credentials(self, mail_settings: dict[str, Any]) -> None:
+        """Store the (optional) username and passphrase.
+
+        Args:
+            mail_settings: The configuration mapping.
+
+        Raises:
+            ValueError: If only one of username and passphrase is provided.
+        """
         self.username = userprovided.parameters.clean_trim(
             mail_settings.get('username', None))
         self.passphrase = userprovided.parameters.clean_trim(
@@ -160,6 +200,17 @@ class Mailer:
             logger.debug('Parameter passphrase is empty.')
 
     def __configure_recipients(self, mail_settings: dict[str, Any]) -> None:
+        """Validate and store the recipient(s) and the sender.
+
+        Args:
+            mail_settings: The configuration mapping.
+
+        Raises:
+            ValueError: If ``recipient`` is an empty dictionary or is neither a
+                string nor a dictionary.
+            err.NotAnEmail: If the sender or any recipient is not a valid email
+                address.
+        """
         self.default_recipient: str = ''
         self.recipient: str | dict = mail_settings['recipient']
 
@@ -191,6 +242,18 @@ class Mailer:
             raise err.NotAnEmail('sender is not a valid email!')
 
     def __configure_formatting(self, mail_settings: dict[str, Any]) -> None:
+        """Set the line-wrap width and the socket timeout.
+
+        Out-of-range ``wrap_width`` values fall back to the 80-character
+        default rather than failing.
+
+        Args:
+            mail_settings: The configuration mapping.
+
+        Raises:
+            ValueError: If ``wrap_width`` is not an integer, or ``timeout`` is
+                not a positive number.
+        """
         wrap_width = mail_settings.get('wrap_width', 80)
         if not isinstance(wrap_width, int) or isinstance(wrap_width, bool):
             raise ValueError('wrap_width is not an integer!')
@@ -210,6 +273,11 @@ class Mailer:
 
     def __send_unencrypted(self,
                            msg: EmailMessage) -> None:
+        """Send the message over a plain, unencrypted SMTP connection.
+
+        Args:
+            msg: The prepared email message to send.
+        """
         if self.server_port is not None:
             with smtplib.SMTP(self.server, self.server_port,
                               timeout=self.timeout) as s:
@@ -220,6 +288,11 @@ class Mailer:
 
     def __send_ssl(self,
                    msg: EmailMessage) -> None:
+        """Send the message over an implicit-TLS (SSL) SMTP connection.
+
+        Args:
+            msg: The prepared email message to send.
+        """
         # A port of 0 lets smtplib pick the protocol default (465 for SSL).
         with smtplib.SMTP_SSL(host=self.server,
                               port=self.server_port or 0,
@@ -231,6 +304,11 @@ class Mailer:
 
     def __send_starttls(self,
                         msg: EmailMessage) -> None:
+        """Send the message over an SMTP connection upgraded with STARTTLS.
+
+        Args:
+            msg: The prepared email message to send.
+        """
         # A port of 0 lets smtplib pick the protocol default (25 for SMTP).
         with smtplib.SMTP(self.server,
                           self.server_port or 0,
@@ -245,8 +323,22 @@ class Mailer:
                   message_text: str,
                   overwrite_recipient: str | None = None) -> None:
         """Send an email.
-           Sender and receiver were fixed with the constructor.
-           With overwrite_recipient you change the recipient for this mail."""
+
+        The sender and recipient are fixed in the constructor; the text is
+        wrapped to ``wrap_width`` while preserving intentional line breaks.
+
+        Args:
+            message_subject: The subject line. Must not be empty.
+            message_text: The body of the email. Must not be empty.
+            overwrite_recipient: Optional address used as the recipient for
+                this message instead of the default recipient.
+
+        Raises:
+            ValueError: If the recipient is not a valid email address.
+            err.MissingSubject: If the subject is empty.
+            err.MissingMailContent: If the body is empty.
+            smtplib.SMTPException: If sending fails (re-raised after logging).
+        """
         # pylint: disable=too-many-branches
 
         recipient: str = overwrite_recipient if overwrite_recipient else self.default_recipient
@@ -304,8 +396,18 @@ class Mailer:
     def send_mail_to_admin(self,
                            message_subject: str,
                            message_text: str) -> None:
-        """If a dictionary is used for recipient and if it contains an
-           admin key: send an email to the corresponding address."""
+        """Send an email to the ``admin`` recipient.
+
+        Requires the constructor to have received a ``recipient`` dictionary
+        containing an ``admin`` key.
+
+        Args:
+            message_subject: The subject line. Must not be empty.
+            message_text: The body of the email. Must not be empty.
+
+        Raises:
+            ValueError: If no ``admin`` address was configured.
+        """
         if not isinstance(self.recipient, dict) or 'admin' not in self.recipient:
             raise ValueError('Mail address for admin not set with init!')
         self.send_mail(

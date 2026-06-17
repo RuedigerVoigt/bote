@@ -12,6 +12,7 @@
   * Updated dependencies: compatibility>=2.0.0 and userprovided>=2.5.0.
   * Fixed type annotations.
   * Bumped development tooling to current major versions.
+  * Adopted Google-style docstrings (`Args:`/`Raises:` sections) throughout the package as the documentation convention.
 * Behavior changes:
   * Credential validation: Username and passphrase must now be provided together or both omitted. Providing only one raises `ValueError` at initialization. This catches configuration errors early.
   * Conditional authentication: SMTP login is now skipped when both username and passphrase are omitted, enabling authentication methods that don't require credentials (e.g., IP-based auth).

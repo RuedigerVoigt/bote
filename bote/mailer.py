@@ -51,7 +51,6 @@ class Mailer:
     rather than hardcoding literals. Retrieve the secret securely and then pass
     it to `mail_settings['username']` / `mail_settings['passphrase']`.
     """
-    # pylint: disable=too-many-branches
     # pylint: disable=too-many-instance-attributes
 
     def __init__(self,
@@ -69,6 +68,23 @@ class Mailer:
         Both must be provided together or omitted entirely.
         """
 
+        self.__check_compatibility()
+        self.__validate_keys(mail_settings)
+        self.__configure_server(mail_settings)
+        self.__configure_credentials(mail_settings)
+        self.__configure_recipients(mail_settings)
+        self.__configure_formatting(mail_settings)
+
+        # Create SSL context. According to the docs this will:
+        # * load the system’s trusted CA certificates,
+        # * enable certificate validation and hostname checking,
+        # * try to choose reasonably secure protocol and cipher settings.
+        # see:
+        # https://docs.python.org/3/library/ssl.html#ssl-security
+        self.context = ssl.create_default_context()
+
+    @staticmethod
+    def __check_compatibility() -> None:
         compatibility.Check(
             package_name='bote',
             package_version=__version__,
@@ -86,6 +102,8 @@ class Mailer:
             }
         )
 
+    @staticmethod
+    def __validate_keys(mail_settings: dict[str, Any]) -> None:
         userprovided.parameters.validate_dict_keys(
             dict_to_check=mail_settings,
             allowed_keys={'server', 'server_port', 'encryption',
@@ -95,9 +113,9 @@ class Mailer:
             necessary_keys={'recipient', 'sender'},
             dict_name='mail_settings')
 
+    def __configure_server(self, mail_settings: dict[str, Any]) -> None:
         # Not all keys must be there.
-        # Provide default values for missing ones with defaultdict:
-
+        # Provide default values for missing ones:
         self.server: str = mail_settings.get('server', 'localhost')
         self.is_local = bool(self.server in ('localhost', '127.0.0.1', '::1'))
 
@@ -121,8 +139,11 @@ class Mailer:
             raise ValueError(
                 'Provide a port if you connect to a remote SMTP server.')
 
-        self.username = userprovided.parameters.clean_trim(mail_settings.get('username', None))
-        self.passphrase = userprovided.parameters.clean_trim(mail_settings.get('passphrase', None))
+    def __configure_credentials(self, mail_settings: dict[str, Any]) -> None:
+        self.username = userprovided.parameters.clean_trim(
+            mail_settings.get('username', None))
+        self.passphrase = userprovided.parameters.clean_trim(
+            mail_settings.get('passphrase', None))
         # Even for a remote connection username and passphrase might be
         # not necessary - for example if the identification is host based.
         # Therefore no exception is thrown.
@@ -138,6 +159,7 @@ class Mailer:
         if not self.passphrase:
             logger.debug('Parameter passphrase is empty.')
 
+    def __configure_recipients(self, mail_settings: dict[str, Any]) -> None:
         self.default_recipient: str = ''
         self.recipient: str | dict = mail_settings['recipient']
 
@@ -168,6 +190,7 @@ class Mailer:
         if not userprovided.mail.is_email(self.sender):
             raise err.NotAnEmail('sender is not a valid email!')
 
+    def __configure_formatting(self, mail_settings: dict[str, Any]) -> None:
         wrap_width = mail_settings.get('wrap_width', 80)
         if not isinstance(wrap_width, int) or isinstance(wrap_width, bool):
             raise ValueError('wrap_width is not an integer!')
@@ -184,14 +207,6 @@ class Mailer:
             raise ValueError('timeout must be a number of seconds.')
         if self.timeout <= 0:
             raise ValueError('timeout must be a positive number of seconds.')
-
-        # Create SSL context. According to the docs this will:
-        # * load the system’s trusted CA certificates,
-        # * enable certificate validation and hostname checking,
-        # * try to choose reasonably secure protocol and cipher settings.
-        # see:
-        # https://docs.python.org/3/library/ssl.html#ssl-security
-        self.context = ssl.create_default_context()
 
     def __send_unencrypted(self,
                            msg: EmailMessage) -> None:

@@ -1,0 +1,48 @@
+name: Bug Report
+description: Report a problem with bote
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please search existing
+        issues first to avoid raising a duplicate.
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: How can the issue be reproduced?
+      description: Steps to reproduce the behavior. A minimal code example helps.
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: traceback
+    attributes:
+      label: Traceback
+      description: If you ran into an exception, paste the complete traceback.
+      render: shell
+    validations:
+      required: false
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      placeholder: e.g. Ubuntu 24.04, Windows 11, macOS 14
+    validations:
+      required: true
+  - type: input
+    id: bote-version
+    attributes:
+      label: bote version and how you installed it
+      placeholder: e.g. 2.0.0, installed via pip
+    validations:
+      required: true
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      placeholder: e.g. 3.12.3
+    validations:
+      required: true

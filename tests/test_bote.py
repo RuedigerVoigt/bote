@@ -332,6 +332,20 @@ def test_send_mail_rejects_missing_subject_or_body(
     assert expected_msg in str(excinfo.value)
 
 
+@pytest.mark.parametrize("subject", [
+    'Hi\nBcc: victim@example.com',
+    'Hi\r\nBcc: victim@example.com',
+    'Hi\rBcc: victim@example.com',
+])
+def test_send_mail_rejects_subject_with_linebreak(starttls_settings, subject):
+    # A line break in the subject could inject extra email headers and must be
+    # rejected before any SMTP connection is attempted.
+    mailer = bote.Mailer(starttls_settings)
+    with pytest.raises(ValueError) as excinfo:
+        mailer.send_mail(subject, 'random content')
+    assert 'single line' in str(excinfo.value)
+
+
 def test_send_mail_sends_with_valid_input(starttls_settings, mocker):
     mailer = bote.Mailer(starttls_settings)
     mocker.patch('smtplib.SMTP')

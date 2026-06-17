@@ -334,7 +334,8 @@ class Mailer:
                 this message instead of the default recipient.
 
         Raises:
-            ValueError: If the recipient is not a valid email address.
+            ValueError: If the recipient is not a valid email address, or the
+                subject contains a carriage return or line feed.
             err.MissingSubject: If the subject is empty.
             err.MissingMailContent: If the body is empty.
             smtplib.SMTPException: If sending fails (re-raised after logging).
@@ -349,6 +350,17 @@ class Mailer:
         if trimmed_subject is None:
             raise err.MissingSubject(
                 'Mails without subject will likely be classified as spam.')
+
+        # Reject line breaks in the subject to prevent email header injection:
+        # a CRLF could smuggle extra headers (e.g. an attacker-controlled Bcc)
+        # into the message. Python's email library would also refuse to
+        # serialize such a header downstream, but we fail fast here with a
+        # clear error instead of a late, cryptic serialization failure.
+        if '\r' in trimmed_subject or '\n' in trimmed_subject:
+            raise ValueError(
+                'Subject must be a single line: it may not contain a carriage '
+                'return or line feed, which could be used to inject additional '
+                'email headers.')
 
         trimmed_text = userprovided.parameters.clean_trim(message_text)
         if trimmed_text is None:

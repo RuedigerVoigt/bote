@@ -16,6 +16,19 @@ import pytest
 import bote
 
 
+@pytest.fixture
+def starttls_settings():
+    # Fresh copy per test so tests that mutate it stay isolated.
+    return {
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'exampleuser',
+        'passphrase': 'example',
+        'recipient': 'foo@example.com',
+        'sender': 'bar@example.com'}
+
+
 # #############################################################################
 # TEST MISSING AND INVALID PARAMETERS
 # #############################################################################
@@ -302,62 +315,58 @@ def test_invalid_in_combination():
 # #############################################################################
 
 
-def test_send_mail(mocker):
-    # False, but 'valid' settings
-    mail_settings = {
-        'server': 'smtp.example.com',
-        'server_port': 587,
-        'encryption': 'starttls',
-        'username': 'exampleuser',
-        'passphrase': 'example',
-        'recipient': 'foo@example.com',
-        'sender': 'bar@example.com'}
-    mailer = bote.Mailer(mail_settings)
-    # Missing subject line
-    with pytest.raises(bote.err.MissingSubject) as excinfo:
-        mailer.send_mail('', 'random text')
-    assert 'classified as spam' in str(excinfo.value)
-    with pytest.raises(bote.err.MissingSubject) as excinfo:
-        mailer.send_mail(None, 'random text')
-    assert 'classified as spam' in str(excinfo.value)
+@pytest.mark.parametrize("subject, body, expected_exc, expected_msg", [
+    ('', 'random text', bote.err.MissingSubject, 'classified as spam'),
+    (None, 'random text', bote.err.MissingSubject, 'classified as spam'),
+    ('   ', 'random text', bote.err.MissingSubject, 'classified as spam'),
+    ('random subject', '', bote.err.MissingMailContent, 'No mail content supplied.'),
+    ('random subject', None, bote.err.MissingMailContent, 'No mail content supplied.'),
+    ('random subject', '   ', bote.err.MissingMailContent, 'No mail content supplied.'),
+])
+def test_send_mail_rejects_missing_subject_or_body(
+        starttls_settings, subject, body, expected_exc, expected_msg):
+    # Validation happens before any SMTP connection, so no mock is needed.
+    mailer = bote.Mailer(starttls_settings)
+    with pytest.raises(expected_exc) as excinfo:
+        mailer.send_mail(subject, body)
+    assert expected_msg in str(excinfo.value)
 
-    # Missing mail body
-    with pytest.raises(bote.err.MissingMailContent) as excinfo:
-        mailer.send_mail('random subject', '')
-    assert 'No mail content supplied.' in str(excinfo.value)
-    with pytest.raises(bote.err.MissingMailContent) as excinfo:
-        mailer.send_mail('random subject', None)
-    assert 'No mail content supplied.' in str(excinfo.value)
 
-    # Whitespace-only subject
-    with pytest.raises(bote.err.MissingSubject) as excinfo:
-        mailer.send_mail('   ', 'random text')
-    assert 'classified as spam' in str(excinfo.value)
-
-    # Whitespace-only body
-    with pytest.raises(bote.err.MissingMailContent) as excinfo:
-        mailer.send_mail('random subject', '   ')
-    assert 'No mail content supplied.' in str(excinfo.value)
-
-    # ############### PATCH smtplib ##################
-    # as we do not want to actually send an email
+def test_send_mail_sends_with_valid_input(starttls_settings, mocker):
+    mailer = bote.Mailer(starttls_settings)
     mocker.patch('smtplib.SMTP')
-    # send_mail: standard
     mailer.send_mail('random subject', 'random content')
-    # Subject/body with surrounding whitespace should be trimmed and sent
+
+
+def test_send_mail_trims_surrounding_whitespace(starttls_settings, mocker):
+    mailer = bote.Mailer(starttls_settings)
+    mocker.patch('smtplib.SMTP')
     mailer.send_mail('  trimmed subject  ', '  trimmed body  ')
-    # send_mail: overwrite recipient
+
+
+def test_send_mail_overwrite_recipient(starttls_settings, mocker):
+    mailer = bote.Mailer(starttls_settings)
+    mocker.patch('smtplib.SMTP')
     mailer.send_mail('random subject', 'random content', 'foo@example.com')
-    # overwrite recipient with invalid value
+
+
+def test_send_mail_invalid_overwrite_recipient_raises(starttls_settings, mocker):
+    mailer = bote.Mailer(starttls_settings)
+    mocker.patch('smtplib.SMTP')
     with pytest.raises(ValueError) as excinfo:
         mailer.send_mail('random subject', 'random content', 'not_valid')
     assert 'Recipient is not valid' in str(excinfo.value)
-    # switch OFF encryption and switch to localhost
-    mail_settings['encryption'] = 'off'
-    mail_settings['server'] = 'localhost'
-    mailer = bote.Mailer(mail_settings)
+
+
+def test_send_mail_unencrypted_localhost(starttls_settings, mocker):
+    starttls_settings['encryption'] = 'off'
+    starttls_settings['server'] = 'localhost'
+    mailer = bote.Mailer(starttls_settings)
+    mocker.patch('smtplib.SMTP')
     mailer.send_mail('random subject', 'random content')
-    # Switch to SSL encryption and not localhost
+
+
+def test_send_mail_ssl_path(mocker):
     ssl_mail_settings = {
         'server': 'smtp.example.com',
         'server_port': 465,

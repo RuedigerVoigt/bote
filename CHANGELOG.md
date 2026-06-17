@@ -25,6 +25,7 @@
 * Security:
   * Added a `SECURITY.md` security policy documenting supported versions and how to report a vulnerability.
   * Enabled GitHub Private Vulnerability Reporting for confidential disclosure.
+  * Added a release workflow that publishes to PyPI via OIDC trusted publishing (no long-lived API token) with build attestations.
   * Enabled immutable releases so published release tags and assets cannot be altered after the fact.
   * Added a Bandit workflow that scans the package for common security issues on every push and pull request.
   * Added a scheduled pip-audit workflow that scans dependencies for known vulnerabilities daily.

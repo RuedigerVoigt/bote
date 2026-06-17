@@ -272,9 +272,9 @@ class Mailer:
         except smtplib.SMTPServerDisconnected:
             logger.exception('SMTP server unexpectedly disconnected.')
             raise
-        except (smtplib.SMTPException, Exception):
-            # Catch both SMTP-specific exceptions and general exceptions
-            # (e.g., network errors, SSL errors) to ensure all failures are logged
+        except Exception:  # noqa: BLE001 - best-effort catch-all; logged and re-raised
+            # Sweep up anything not matched above (other SMTP errors plus
+            # general failures such as network or SSL errors) so it is logged.
             logger.exception('Problem sending mail!')
             raise
 

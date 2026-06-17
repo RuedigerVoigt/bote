@@ -598,10 +598,15 @@ def test_send_mail_GENERIC_SMTP(caplog):
 
 
 def test_send_mail_GENERIC(caplog):
+    # A distinctive sentinel so the test only passes when this exact error
+    # propagates through the catch-all branch, not some unrelated failure.
+    class Boom(Exception):
+        pass
+
     with patch('bote.Mailer._Mailer__send_starttls',
-               side_effect=Exception):
+               side_effect=Boom):
         mailer = bote.Mailer(false_but_valid_mail_settings)
-        with pytest.raises(Exception):
+        with pytest.raises(Boom):
             mailer.send_mail('random subject', 'random content')
         assert "Problem sending mail" in caplog.text
 

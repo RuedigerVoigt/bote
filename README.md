@@ -1,22 +1,48 @@
-# Bote
+# Bote — Secure Python SMTP Client for Plain-Text Email
 
 ![Supported Python Versions](https://img.shields.io/pypi/pyversions/bote)
 ![Last commit](https://img.shields.io/github/last-commit/RuedigerVoigt/bote)
 ![pypi version](https://img.shields.io/pypi/v/bote)
 [![Downloads](https://pepy.tech/badge/bote)](https://pepy.tech/project/bote)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+![License](https://img.shields.io/pypi/l/bote)
 
-**A Python library for sending plain-text email via SMTP with enforced encryption for remote connections.**
+**Bote is a small, security-focused Python library for sending plain-text email via SMTP — a safe wrapper around the standard-library `smtplib` that enforces STARTTLS/SSL encryption on every remote connection.**
 
-Bote is a Python SMTP client library that sends plain-text emails. It wraps Python's built-in `smtplib` with a focus on security:
-* **Enforcing encryption**: Any connection to a SMTP server - except `localhost` / `127.0.0.1` / `::1` - must be encrypted. (This does not influence how the SMTP server sends the message to the recipient.)
-* **Validation**: Email addresses and configuration validated at initialization, not when sending
-* **Clear Errors:** Provides custom exceptions with helpful messages instead of generic SMTP errors
-* **Type safety**: Full type hints ([PEP 484](https://www.python.org/dev/peps/pep-0484/)) for better IDE support and fewer runtime errors.
-* Extensive testing
-* Automatically wrap messages preserving intentional line-breaks.
+Use it to send notifications, alerts, and automated email from your Python applications, whether through a local mail server on `localhost` or a remote SMTP provider. Bote validates your configuration up front and fails fast with clear, typed errors instead of cryptic SMTP tracebacks.
 
-"Bote" is German for messenger or courier. The `bote` library sends plain-text email from localhost or a remote SMTP server. 
+## Features
+
+* **Enforced encryption** — any connection to an SMTP server other than `localhost` / `127.0.0.1` / `::1` *must* use STARTTLS or SSL. This cannot be bypassed. (It does not affect how the SMTP server then relays the message to the recipient.)
+* **Early validation** — email addresses and configuration are checked when you create the `Mailer`, not when you send, so misconfiguration surfaces immediately.
+* **Clear, typed errors** — custom exceptions (`UnencryptedRemoteConnection`, `NotAnEmail`, `MissingSubject`, `MissingMailContent`) with helpful messages instead of generic SMTP errors.
+* **Header-injection protection** — rejects CR/LF in the subject line to prevent SMTP header injection.
+* **Type safety** — full type hints ([PEP 484](https://www.python.org/dev/peps/pep-0484/), ships a `py.typed` marker) for better IDE support and fewer runtime errors.
+* **Configurable timeouts** — every SMTP operation honors a timeout so an unresponsive server cannot block forever.
+* **Automatic text wrapping** — messages are wrapped to a configurable width while preserving intentional line breaks.
+* **Well tested** — 100% test coverage across Linux, macOS, and Windows.
+
+> "Bote" is German for *messenger* or *courier*.
+
+## Table of Contents
+
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Quick Start](#quick-start)
+* [Keeping Your Credentials Safe](#keeping-your-credentials-safe)
+* [Configuration Parameters](#configuration-parameters)
+* [Recipient Options](#recipient-options)
+* [Examples](#examples)
+* [Error Handling](#error-handling)
+* [API Summary](#api-summary)
+* [Exceptions](#exceptions)
+* [License](#license)
+* [Resources](#resources)
+
+## Requirements
+
+* **Python 3.10 or newer** (uses modern type-hint syntax such as `dict[str, Any]` and `str | None`). Tested through Python 3.14.
+* Dependencies (installed automatically): [`compatibility`](https://github.com/RuedigerVoigt/compatibility) `>= 2.2.0` and [`userprovided`](https://github.com/RuedigerVoigt/userprovided) `>= 2.5.0`.
 
 ## Installation
 
@@ -211,6 +237,34 @@ mailer.send_mail_to_admin('Alert', 'System requires attention')
 mailer.send_mail('Custom', 'One-off message', overwrite_recipient='other@example.com')
 ```
 
+## Error Handling
+
+Bote validates configuration when you create the `Mailer`, so most mistakes are caught before you ever try to send. Sending then raises clear, catchable exceptions:
+
+```python
+import bote
+
+try:
+    mailer = bote.Mailer({
+        'server': 'smtp.example.com',
+        'server_port': 587,
+        'encryption': 'starttls',
+        'username': 'user@example.com',
+        'passphrase': 'app-password',
+        'sender': 'noreply@example.com',
+        'recipient': 'user@example.com',
+    })
+    mailer.send_mail('Subject', 'Body text')
+except bote.UnencryptedRemoteConnection:
+    print("Refused: remote connections must use STARTTLS or SSL.")
+except bote.NotAnEmail:
+    print("One of the addresses is not a valid email.")
+except (bote.MissingSubject, bote.MissingMailContent):
+    print("A subject and a body are both required.")
+```
+
+All custom exceptions inherit from `bote.BoteException`, so you can catch them all with a single `except bote.BoteException:`.
+
 ## API Summary
 
 ### Constructor
@@ -246,11 +300,23 @@ Send an email to the admin address (requires `recipient` to be a dictionary with
 
 ## Exceptions
 
-Bote raises custom exceptions for common error cases:
+Bote raises custom exceptions for common error cases. They are exported at the top level (`bote.NotAnEmail`) and are also available from the `bote.err` module:
 
-- **`UnencryptedRemoteConnection`**: Raised when attempting to connect to a remote SMTP server without encryption
-- **`NotAnEmail`**: Raised when an invalid email address is provided
-- **`MissingSubject`**: Raised when attempting to send an email without a subject line
-- **`MissingMailContent`**: Raised when attempting to send an email without body content
+- **`bote.UnencryptedRemoteConnection`**: Raised when attempting to connect to a remote SMTP server without encryption
+- **`bote.NotAnEmail`**: Raised when an invalid email address is provided
+- **`bote.MissingSubject`**: Raised when attempting to send an email without a subject line
+- **`bote.MissingMailContent`**: Raised when attempting to send an email without body content
 
-All exceptions inherit from `BoteException`, which inherits from the standard `Exception` class.
+All exceptions inherit from `bote.BoteException`, which inherits from the standard `Exception` class, so `except bote.BoteException:` catches every bote-specific error.
+
+## License
+
+Bote is released under the [Apache License 2.0](LICENSE).
+
+## Resources
+
+* **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+* **Security policy / reporting a vulnerability:** [SECURITY.md](SECURITY.md)
+* **Contributing:** [contributing.md](contributing.md)
+* **Issue tracker:** <https://github.com/RuedigerVoigt/bote/issues>
+* **PyPI:** <https://pypi.org/project/bote/>

@@ -8,6 +8,7 @@
   * Drop support for Python 3.8 and 3.9 (EOL or near EOL).
   * Tests and support for Python 3.10, 3.11, 3.12, 3.13, and 3.14.
 * Code modernization:
+  * Exceptions are now importable directly from the `bote` package (e.g. `bote.NotAnEmail`), not only from `bote.err`.
   * Switch to package-level logger instead of root logger (library best practice).
   * Updated dependencies: compatibility>=2.2.0 and userprovided>=2.5.0.
   * Fixed type annotations.

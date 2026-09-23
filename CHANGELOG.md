@@ -1,6 +1,6 @@
 # Changelog / History
 
-## Version 2.0.0 (upcoming)
+## Version 2.0.0 (2026-09-23)
 
 * Migrated from setup.py to pyproject.toml with Poetry as build backend.
 * Migrated project metadata to the standardized PEP 621 `[project]` table (requires `poetry-core>=2.0.0`).

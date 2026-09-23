@@ -2,7 +2,7 @@
 Bote
 
 Source: https://github.com/RuedigerVoigt/bote
-(c) 2020-2025 Rüdiger Voigt and contributors
+(c) 2020-2026 Rüdiger Voigt and contributors
 Released under the Apache License 2.0
 """
 
@@ -39,7 +39,7 @@ except PackageNotFoundError:
         __version__ = "0+unknown"
 
 # Release date for compatibility check
-_release_date = date(2025, 11, 9)
+_release_date = date(2026, 9, 23)
 
 
 class Mailer:

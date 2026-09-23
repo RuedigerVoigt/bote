@@ -10,7 +10,7 @@
 * Code modernization:
   * Exceptions are now importable directly from the `bote` package (e.g. `bote.NotAnEmail`), not only from `bote.err`.
   * Switch to package-level logger instead of root logger (library best practice).
-  * Updated dependencies: compatibility>=2.2.0 and userprovided>=2.5.0.
+  * Updated dependencies: compatibility>=2.3.0,<3 and userprovided>=2.5.0.
   * Fixed type annotations.
   * Bumped development tooling to current major versions.
   * Adopted Google-style docstrings (`Args:`/`Raises:` sections) throughout the package as the documentation convention.

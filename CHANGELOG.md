@@ -6,7 +6,7 @@
 * Migrated project metadata to the standardized PEP 621 `[project]` table (requires `poetry-core>=2.0.0`).
 * Python Support:
   * Drop support for Python 3.8, 3.9, and 3.10 (EOL or near EOL).
-  * Tests and support for Python 3.11, 3.12, 3.13, and 3.14.
+  * Tests and support for Python 3.11, 3.12, 3.13, 3.14, and 3.15. (Python 3.15 is tested with its last release candidate, 3.15.0rc2.)
 * Code modernization:
   * Exceptions are now importable directly from the `bote` package (e.g. `bote.NotAnEmail`), not only from `bote.err`.
   * Switch to package-level logger instead of root logger (library best practice).
@@ -24,7 +24,6 @@
   * Added separate Ruff linting workflow.
   * All GitHub Actions workflows updated to latest versions.
   * Added a Dependabot configuration tracking Python dependencies and GitHub Actions versions.
-  * CI also tests Python 3.15 (release candidate) on Linux, macOS, and Windows; these runs must pass.
 * Security:
   * Added a `SECURITY.md` security policy documenting supported versions and how to report a vulnerability.
   * Enabled GitHub Private Vulnerability Reporting for confidential disclosure.

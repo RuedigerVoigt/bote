@@ -18,6 +18,7 @@
   * Credential validation: Username and passphrase must now be provided together or both omitted. Providing only one raises `ValueError` at initialization. This catches configuration errors early.
   * Conditional authentication: SMTP login is now skipped when both username and passphrase are omitted, enabling authentication methods that don't require credentials (e.g., IP-based auth).
   * Connection timeout: All SMTP operations now honor a configurable `timeout` setting (`mail_settings['timeout']`, default 60 seconds, validated as a positive number). Previously a connection could block indefinitely on an unresponsive server.
+  * Wrong parameter types now raise `TypeError` instead of `ValueError`: a non-integer `server_port` or `wrap_width`, a non-numeric `timeout`, and a `recipient` that is neither a string nor a dictionary. Invalid values of the right type (e.g. an out-of-range port) still raise `ValueError`.
 * Quality:
   * Workflow enforces 100% test coverage.
   * Added separate Ruff linting workflow.

@@ -70,8 +70,11 @@ class Mailer:
 
         Raises:
             ValueError: If a key is missing or unknown, or a value is invalid
-                (e.g. unknown encryption, bad port, non-integer ``wrap_width``,
-                non-positive ``timeout``).
+                (e.g. unknown encryption, out-of-range port, non-positive
+                ``timeout``).
+            TypeError: If a value has the wrong type (e.g. non-integer port or
+                ``wrap_width``, non-numeric ``timeout``, ``recipient`` neither
+                a string nor a dictionary).
             err.UnencryptedRemoteConnection: If the connection is not local but
                 encryption is ``'off'``.
             err.NotAnEmail: If the sender or any recipient is not a valid email
@@ -140,8 +143,9 @@ class Mailer:
             mail_settings: The configuration mapping.
 
         Raises:
-            ValueError: If the encryption mode or port is invalid, or no port
-                is given for a remote server.
+            ValueError: If the encryption mode is invalid, the port is out of
+                range, or no port is given for a remote server.
+            TypeError: If the port is not an integer.
             err.UnencryptedRemoteConnection: If the connection is not local but
                 encryption is ``'off'``.
         """
@@ -163,7 +167,7 @@ class Mailer:
         self.server_port: int | None = mail_settings.get('server_port', None)
         if self.server_port:
             if not isinstance(self.server_port, int):
-                raise ValueError('Port has to be an integer')
+                raise TypeError('Port has to be an integer')
             if not userprovided.parameters.is_port(self.server_port):
                 raise ValueError('Port must be integer (0 to 65535)')
         elif not self.is_local:
@@ -205,8 +209,8 @@ class Mailer:
             mail_settings: The configuration mapping.
 
         Raises:
-            ValueError: If ``recipient`` is an empty dictionary or is neither a
-                string nor a dictionary.
+            ValueError: If ``recipient`` is an empty dictionary.
+            TypeError: If ``recipient`` is neither a string nor a dictionary.
             err.NotAnEmail: If the sender or any recipient is not a valid email
                 address.
         """
@@ -233,7 +237,7 @@ class Mailer:
                 raise err.NotAnEmail('recipient is not a valid email!')
             self.default_recipient = self.recipient
         else:
-            raise ValueError(
+            raise TypeError(
                 'Parameter recipient must be either string or dictionary.')
 
         self.sender = mail_settings['sender']
@@ -250,12 +254,13 @@ class Mailer:
             mail_settings: The configuration mapping.
 
         Raises:
-            ValueError: If ``wrap_width`` is not an integer, or ``timeout`` is
-                not a positive number.
+            ValueError: If ``timeout`` is not positive.
+            TypeError: If ``wrap_width`` is not an integer, or ``timeout`` is
+                not a number.
         """
         wrap_width = mail_settings.get('wrap_width', 80)
         if not isinstance(wrap_width, int) or isinstance(wrap_width, bool):
-            raise ValueError('wrap_width is not an integer!')
+            raise TypeError('wrap_width is not an integer!')
         # Clamp to a sane range. Out-of-range values fall back to the 80-char
         # default instead of crashing textwrap at send time. The upper bound is
         # the RFC 5322 maximum line length.
@@ -266,7 +271,7 @@ class Mailer:
         # default stops a hung or unreachable server from blocking forever.
         self.timeout: float = mail_settings.get('timeout', 60.0)
         if isinstance(self.timeout, bool) or not isinstance(self.timeout, (int, float)):
-            raise ValueError('timeout must be a number of seconds.')
+            raise TypeError('timeout must be a number of seconds.')
         if self.timeout <= 0:
             raise ValueError('timeout must be a positive number of seconds.')
 

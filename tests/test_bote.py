@@ -215,7 +215,7 @@ def test_invalid_parameters():
         mailer = bote.Mailer(recipient_is_empty_dict)
     assert 'Dictionary recipient is empty' in str(excinfo.value)
 
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(TypeError) as excinfo:
         recipient_neither_str_nor_dict = {
             'server': 'smtp.example.com',
             'server_port': 123,
@@ -227,7 +227,7 @@ def test_invalid_parameters():
         mailer = bote.Mailer(recipient_neither_str_nor_dict)
     assert 'must be' in str(excinfo.value)
 
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(TypeError) as excinfo:
         port_not_int = {
             'server': 'smtp.example.com',
             'server_port': 'foo',
@@ -263,7 +263,7 @@ def test_invalid_parameters():
         mailer = bote.Mailer(unknown_encryption)
     assert 'Invalid value for the encryption parameter' in str(excinfo.value)
 
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(TypeError) as excinfo:
         wrap_width_not_integer = {
             'server': 'smtp.example.com',
             'server_port': 123,
@@ -617,7 +617,7 @@ def test_send_mail_GENERIC(caplog):
 
 
 def test_invalid_timeout_type():
-    # A non-numeric timeout should raise ValueError at initialization
+    # A non-numeric timeout should raise TypeError at initialization
     mail_settings = {
         'server': 'smtp.example.com',
         'server_port': 587,
@@ -627,7 +627,7 @@ def test_invalid_timeout_type():
         'recipient': 'foo@example.com',
         'sender': 'bar@example.com',
         'timeout': 'soon'}
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(TypeError) as excinfo:
         bote.Mailer(mail_settings)
     assert 'timeout must be a number' in str(excinfo.value)
 

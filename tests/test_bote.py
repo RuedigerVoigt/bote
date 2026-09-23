@@ -11,8 +11,8 @@ import logging
 import smtplib
 from unittest.mock import patch
 
-
 import pytest
+
 import bote
 
 
@@ -210,7 +210,7 @@ def test_invalid_parameters():
             'encryption': 'ssl',
             'username': 'exampleuser',
             'passphrase': 'example',
-            'recipient': dict(),
+            'recipient': {},
             'sender': 'foo@example.com'}
         mailer = bote.Mailer(recipient_is_empty_dict)
     assert 'Dictionary recipient is empty' in str(excinfo.value)
@@ -412,7 +412,7 @@ def test_unencrypted_uses_custom_port(mocker):
     mailer.send_mail('subject', 'body')
     # Called once with server and custom port
     assert mock_smtp.call_count == 1
-    args, kwargs = mock_smtp.call_args
+    args = mock_smtp.call_args.args
     assert args[:2] == ('localhost', 2525)
 
 
@@ -430,7 +430,7 @@ def test_unencrypted_without_port_uses_default_call(mocker):
     mock_smtp = mocker.patch('smtplib.SMTP')
     mailer.send_mail('subject', 'body')
     assert mock_smtp.call_count == 1
-    args, kwargs = mock_smtp.call_args
+    args = mock_smtp.call_args.args
     assert args == ('localhost',)
 
 
@@ -572,7 +572,7 @@ def test_send_mail_SENDER_REFUSED(caplog):
 
 def test_send_mail_RECIPIENT_REFUSED(caplog):
     with patch('bote.Mailer._Mailer__send_starttls',
-               side_effect=smtplib.SMTPRecipientsRefused(dict())):
+               side_effect=smtplib.SMTPRecipientsRefused({})):
         mailer = bote.Mailer(false_but_valid_mail_settings)
         with pytest.raises(smtplib.SMTPRecipientsRefused):
             mailer.send_mail('random subject', 'random content')

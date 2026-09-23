@@ -6,15 +6,15 @@ Source: https://github.com/RuedigerVoigt/bote
 Released under the Apache License 2.0
 """
 
-from datetime import date
-from email.message import EmailMessage
 import logging
-from pathlib import Path
 import re
 import smtplib
 import ssl
 import textwrap
+from datetime import date
+from email.message import EmailMessage
 from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
 from typing import Any
 
 # sister-projects:
@@ -224,7 +224,7 @@ class Mailer:
                 logger.warning("No default key in recipient dictionary!")
 
             # Validate all recipient values are valid email addresses
-            for _key, _value in self.recipient.items():
+            for _value in self.recipient.values():
                 if not isinstance(_value, str) or not userprovided.mail.is_email(_value):
                     raise err.NotAnEmail('recipient is not a valid email!')
 
@@ -401,7 +401,7 @@ class Mailer:
         except smtplib.SMTPServerDisconnected:
             logger.exception('SMTP server unexpectedly disconnected.')
             raise
-        except Exception:  # noqa: BLE001 - best-effort catch-all; logged and re-raised
+        except Exception:  # best-effort catch-all; logged and re-raised
             # Sweep up anything not matched above (other SMTP errors plus
             # general failures such as network or SSL errors) so it is logged.
             logger.exception('Problem sending mail!')

@@ -39,7 +39,7 @@ merged.
 
 | Workflow | When it runs | Purpose |
 | --- | --- | --- |
-| Pytest, MacOS Test, Windows Test | push & PR | Run the test suite on Linux (Python 3.11–3.14), macOS (3.11, 3.14), and Windows (3.11–3.14). |
+| Pytest, MacOS Test, Windows Test | push & PR | Run the test suite on Linux (Python 3.11–3.15), macOS (3.11, 3.14, 3.15), and Windows (3.11–3.15). Python 3.15 is installed as a pre-release until its final release. |
 | Coverage Check | push & PR | Fail if test coverage drops below 100%. |
 | Ruff | push & PR | Lint the code. |
 | Mypy | push & PR (`master`/`develop`) | Static type checking on Python 3.11 and 3.14. |

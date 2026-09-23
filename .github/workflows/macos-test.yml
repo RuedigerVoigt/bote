@@ -11,7 +11,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        python-version: ['3.11', '3.14']
+        python-version: ['3.11', '3.14', '3.15']
 
     steps:
     - uses: actions/checkout@v6
@@ -20,6 +20,8 @@ jobs:
       uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
+        # Needed to install Python 3.15 while it is a release candidate.
+        allow-prereleases: true
 
     - name: Install Poetry and dependencies
       run: |

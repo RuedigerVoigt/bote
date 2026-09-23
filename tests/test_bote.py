@@ -239,6 +239,23 @@ def test_invalid_parameters():
         mailer = bote.Mailer(port_not_int)
     assert 'Port has to be an integer' in str(excinfo.value)
 
+    with pytest.raises(TypeError) as excinfo:
+        # bool is a subclass of int, but True must not be read as port 1
+        port_is_bool = {
+            'server': 'smtp.example.com',
+            'server_port': True,
+            'encryption': 'ssl',
+            'username': 'exampleuser',
+            'passphrase': 'example',
+            'recipient': 'bar@example.com',
+            'sender': 'foo@example.com'}
+        mailer = bote.Mailer(port_is_bool)
+    assert 'Port has to be an integer' in str(excinfo.value)
+
+    with pytest.raises(TypeError) as excinfo:
+        mailer = bote.Mailer(['recipient', 'sender'])
+    assert 'Expected a dictionary' in str(excinfo.value)
+
     with pytest.raises(ValueError) as excinfo:
         port_out_of_range = {
             'server': 'smtp.example.com',

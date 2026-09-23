@@ -71,9 +71,10 @@ class Mailer:
             ValueError: If a key is missing or unknown, or a value is invalid
                 (e.g. unknown encryption, out-of-range port, non-positive
                 ``timeout``).
-            TypeError: If a value has the wrong type (e.g. non-integer port or
-                ``wrap_width``, non-numeric ``timeout``, ``recipient`` neither
-                a string nor a dictionary).
+            TypeError: If ``mail_settings`` is not a dictionary, or a value
+                has the wrong type (e.g. non-integer or boolean port,
+                non-integer ``wrap_width``, non-numeric ``timeout``,
+                ``recipient`` neither a string nor a dictionary).
             err.UnencryptedRemoteConnection: If the connection is not local but
                 encryption is ``'off'``.
             err.NotAnEmail: If the sender or any recipient is not a valid email
@@ -125,6 +126,7 @@ class Mailer:
         Raises:
             ValueError: If a required key is missing or an unknown key is
                 present.
+            TypeError: If ``mail_settings`` is not a dictionary.
         """
         userprovided.parameters.validate_dict_keys(
             dict_to_check=mail_settings,

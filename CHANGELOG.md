@@ -7,10 +7,13 @@
 * Python Support:
   * Drop support for Python 3.8, 3.9, and 3.10 (EOL or near EOL).
   * Tests and support for Python 3.11, 3.12, 3.13, 3.14, and 3.15. (Python 3.15 is tested with its last release candidate, 3.15.0rc2.)
+* Dependencies:
+  * Updated `compatibility` to `>=2.3.0,<3`.
+  * Updated `userprovided` to `>=3.0.0,<4`. Its stricter type checks surface in bote as the `TypeError` cases listed under behavior changes.
+  * Both dependencies are now capped below their next major version, so a future release with breaking changes is not installed automatically.
 * Code modernization:
   * Exceptions are now importable directly from the `bote` package (e.g. `bote.NotAnEmail`), not only from `bote.err`.
   * Switch to package-level logger instead of root logger (library best practice).
-  * Updated dependencies: compatibility>=2.3.0,<3 and userprovided>=2.5.0.
   * Fixed type annotations.
   * Bumped development tooling to current major versions.
   * Adopted Google-style docstrings (`Args:`/`Raises:` sections) throughout the package as the documentation convention.
@@ -19,6 +22,7 @@
   * Conditional authentication: SMTP login is now skipped when both username and passphrase are omitted, enabling authentication methods that don't require credentials (e.g., IP-based auth).
   * Connection timeout: All SMTP operations now honor a configurable `timeout` setting (`mail_settings['timeout']`, default 60 seconds, validated as a positive number). Previously a connection could block indefinitely on an unresponsive server.
   * Wrong parameter types now raise `TypeError` instead of `ValueError`: a non-integer `server_port` or `wrap_width`, a non-numeric `timeout`, and a `recipient` that is neither a string nor a dictionary. Invalid values of the right type (e.g. an out-of-range port) still raise `ValueError`.
+  * A boolean `server_port` now raises `TypeError`. Previously `True` was accepted as port 1. A `mail_settings` that is not a dictionary also raises `TypeError`.
 * Quality:
   * Workflow enforces 100% test coverage.
   * Added separate Ruff linting workflow.

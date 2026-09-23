@@ -7,10 +7,10 @@ Released under the Apache License 2.0
 """
 
 import logging
-import re
 import smtplib
 import ssl
 import textwrap
+import tomllib
 from datetime import date
 from email.message import EmailMessage
 from importlib.metadata import PackageNotFoundError, version
@@ -30,12 +30,11 @@ logger = logging.getLogger(__name__)
 try:
     __version__ = version("bote")
 except PackageNotFoundError:
-    # Source checkout fallback without requiring tomllib (works on Python 3.10)
+    # Source checkout fallback: read the version from pyproject.toml
     try:
         _pyproject_path = Path(__file__).parent.parent / "pyproject.toml"
         _pyproject_text = _pyproject_path.read_text(encoding="utf-8")
-        _m = re.search(r"(?m)^[\t ]*version\s*=\s*\"([^\"]+)\"", _pyproject_text)
-        __version__ = _m.group(1) if _m else "0+unknown"
+        __version__ = tomllib.loads(_pyproject_text)["project"]["version"]
     except Exception:  # noqa: BLE001 - best-effort fallback
         __version__ = "0+unknown"
 
@@ -104,8 +103,8 @@ class Mailer:
             package_version=__version__,
             release_date=_release_date,
             python_version_support={
-                'min_version': '3.10',
-                'incompatible_versions': ['3.8', '3.9'],
+                'min_version': '3.11',
+                'incompatible_versions': ['3.8', '3.9', '3.10'],
                 'max_tested_version': '3.14'},
             nag_over_update={
                     'nag_days_after_release': 365,

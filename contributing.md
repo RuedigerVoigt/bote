@@ -19,7 +19,7 @@ button or by email. See [SECURITY.md](SECURITY.md) for details.
 
 ### Requirements
 
-* **Python Version:** Requires Python 3.10 or higher.
+* **Python Version:** Requires Python 3.11 or higher.
 * **Build System:** Poetry + `pyproject.toml` for dependency management.
 
 ### Project Structure
@@ -39,10 +39,10 @@ merged.
 
 | Workflow | When it runs | Purpose |
 | --- | --- | --- |
-| Pytest, MacOS Test, Windows Test | push & PR | Run the test suite on Linux (Python 3.10–3.14), macOS (3.10, 3.14), and Windows (3.10–3.14). |
+| Pytest, MacOS Test, Windows Test | push & PR | Run the test suite on Linux (Python 3.11–3.14), macOS (3.11, 3.14), and Windows (3.11–3.14). |
 | Coverage Check | push & PR | Fail if test coverage drops below 100%. |
 | Ruff | push & PR | Lint the code. |
-| Mypy | push & PR (`master`/`develop`) | Static type checking on Python 3.10 and 3.14. |
+| Mypy | push & PR (`master`/`develop`) | Static type checking on Python 3.11 and 3.14. |
 | Bandit | push & PR | Security scan of the package (tests excluded). |
 | CodeQL | push & PR (`master`/`develop`), weekly | Static security analysis. |
 | pip-audit | push & PR (`master`/`develop`), daily, manual | Scan dependencies for known CVEs. |
@@ -52,7 +52,7 @@ merged.
 * Please adhere to [PEP8](https://www.python.org/dev/peps/pep-0008/);
   4-space indentation; prefer clear, short functions.
 * Type hints are required.
-* Use Python 3.10+ syntax.
+* Use Python 3.11+ syntax.
 * Naming: `snake_case` for functions and variables, `CamelCase` for classes,
   `UPPER_CASE` for constants. Use speaking names.
 * Docstrings: Google style (`Args:`/`Returns:`/`Raises:` sections where

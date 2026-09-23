@@ -41,7 +41,7 @@ Use it to send notifications, alerts, and automated email from your Python appli
 
 ## Requirements
 
-* **Python 3.10 or newer** (uses modern type-hint syntax such as `dict[str, Any]` and `str | None`). Tested through Python 3.14.
+* **Python 3.11 or newer** (uses modern type-hint syntax such as `dict[str, Any]` and `str | None`). Tested through Python 3.14.
 * Dependencies (installed automatically): [`compatibility`](https://github.com/RuedigerVoigt/compatibility) `>= 2.2.0` and [`userprovided`](https://github.com/RuedigerVoigt/userprovided) `>= 2.5.0`.
 
 ## Installation

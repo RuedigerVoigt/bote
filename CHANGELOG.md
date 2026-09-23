@@ -5,8 +5,8 @@
 * Migrated from setup.py to pyproject.toml with Poetry as build backend.
 * Migrated project metadata to the standardized PEP 621 `[project]` table (requires `poetry-core>=2.0.0`).
 * Python Support:
-  * Drop support for Python 3.8 and 3.9 (EOL or near EOL).
-  * Tests and support for Python 3.10, 3.11, 3.12, 3.13, and 3.14.
+  * Drop support for Python 3.8, 3.9, and 3.10 (EOL or near EOL).
+  * Tests and support for Python 3.11, 3.12, 3.13, and 3.14.
 * Code modernization:
   * Exceptions are now importable directly from the `bote` package (e.g. `bote.NotAnEmail`), not only from `bote.err`.
   * Switch to package-level logger instead of root logger (library best practice).

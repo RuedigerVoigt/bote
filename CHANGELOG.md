@@ -7,10 +7,7 @@
 * Python Support:
   * Drop support for Python 3.8, 3.9, and 3.10 (EOL or near EOL).
   * Tests and support for Python 3.11, 3.12, 3.13, 3.14, and 3.15. (Python 3.15 is tested with its last release candidate, 3.15.0rc2.)
-* Dependencies:
-  * Updated `compatibility` to `>=2.3.0,<3`.
-  * Updated `userprovided` to `>=3.0.0,<4`. Its stricter type checks surface in bote as the `TypeError` cases listed under behavior changes.
-  * Both dependencies are now capped below their next major version, so a future release with breaking changes is not installed automatically.
+  * Updated dependencies: `compatibility` to `>=2.3.0,<3` and `userprovided` to `>=3.0.0,<4`.
 * Code modernization:
   * Exceptions are now importable directly from the `bote` package (e.g. `bote.NotAnEmail`), not only from `bote.err`.
   * Switch to package-level logger instead of root logger (library best practice).
